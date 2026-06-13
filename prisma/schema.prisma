@@ -1,0 +1,82 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         String    @default("MERCHANT") // MERCHANT, ADMIN, JUDGE, etc.
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  merchant     Merchant?
+}
+
+model Merchant {
+  id               String         @id @default(uuid())
+  userId           String         @unique
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName     String
+  businessType     String
+  businessCategory String
+  location         String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  transactions     Transaction[]
+  insights         Insight[]
+  creditProfile    CreditProfile?
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  merchantId    String
+  merchant      Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  amount        Float
+  type          String   // INCOME, EXPENSE
+  category      String   // Sales, Inventory, Rent, Utilities, etc.
+  description   String?
+  date          DateTime @default(now())
+  source        String   // CSV, DEMO, POS, BANK_STATEMENT
+  paymentMethod String   // CASH, TRANSFER, POS, WALLET
+  direction     String   // INFLOW, OUTFLOW
+  status        String   // COMPLETED, PENDING, FAILED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([merchantId])
+  @@index([date])
+}
+
+model Insight {
+  id         String   @id @default(uuid())
+  merchantId String
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  title      String
+  content    String   // markdown analysis details
+  category   String   // CASH_FLOW, CREDIT, TAX, GROWTH
+  type       String   // WARNING, OPPORTUNITY, INFO
+  isPinned   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([merchantId])
+}
+
+model CreditProfile {
+  id                       String   @id @default(uuid())
+  merchantId               String   @unique
+  merchant                 Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  creditScore              Int
+  riskRating               String   // LOW, MEDIUM, HIGH
+  debtServiceCoverageRatio Float?
+  totalDebt                Float?
+  recommendedLoanAmount    Float?
+  analysisDetails          String?  // JSON string
+  updatedAt                DateTime @updatedAt
+}
