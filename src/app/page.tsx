@@ -129,6 +129,9 @@ export default function LandingPage() {
             <button onClick={() => smoothScrollTo('how-it-works')} className="text-sm text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">
               How It Works
             </button>
+            <button onClick={() => smoothScrollTo('business-model')} className="text-sm text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">
+              Business Model
+            </button>
             <button onClick={() => smoothScrollTo('why-merchantiq')} className="text-sm text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">
               Why MerchantIQ
             </button>
@@ -179,6 +182,7 @@ export default function LandingPage() {
             <nav className="flex flex-col gap-3">
               <button onClick={() => { smoothScrollTo('features'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">Features</button>
               <button onClick={() => { smoothScrollTo('how-it-works'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">How It Works</button>
+              <button onClick={() => { smoothScrollTo('business-model'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">Business Model</button>
               <button onClick={() => { smoothScrollTo('why-merchantiq'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">Why MerchantIQ</button>
             </nav>
             <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
@@ -525,6 +529,94 @@ export default function LandingPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        <section id="business-model" className="py-20 bg-slate-50 border-b border-slate-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="max-w-xl mb-12">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2">
+                Hackathon Pitch Focus
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+                How MerchantIQ Makes Money
+              </h2>
+              <p className="text-slate-600 text-base">
+                Our business model scales with small business owners while unlocking high-margin referral and API revenue from financial partners.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* 1. Pro Subscription */}
+              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm mb-4">
+                    1
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-lg mb-1">MerchantIQ Pro</h3>
+                  <p className="text-xs text-slate-400 mb-4">SME Software-as-a-Service</p>
+                  <div className="space-y-4">
+                    <div className="border-b border-slate-100 pb-3">
+                      <span className="text-xs font-bold text-slate-700 block mb-1">Free Tier</span>
+                      <ul className="text-[11px] text-slate-500 space-y-1">
+                        <li>• Upload statement logs</li>
+                        <li>• Basic financial summary</li>
+                        <li>• Basic cashflow insights</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-slate-900 block mb-1">Pro Tier <span className="text-slate-400 font-normal">(₦2,000 - ₦5,000/mo)</span></span>
+                      <ul className="text-[11px] text-slate-600 space-y-1">
+                        <li>• Unlimited statement uploads</li>
+                        <li>• Daily AI CFO morning brief</li>
+                        <li>• Credit-readiness coaching reports</li>
+                        <li>• Advanced runway forecasting</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 2. Referral Fees */}
+              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm mb-4">
+                    2
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-lg mb-1">Credit Marketplace</h3>
+                  <p className="text-xs text-slate-400 mb-4">Referrals & Matchmaking</p>
+                  <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                    We earn referral and matching commissions from lending institutions when qualified merchants access financing options.
+                  </p>
+                  <div className="bg-slate-50 border border-slate-100 rounded-lg p-3">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Lending Partners</span>
+                    <p className="text-[11px] text-slate-500 leading-normal">
+                      Automated credit readiness metrics pre-qualify SMEs, reducing acquisition costs for partner banks and micro-lenders.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. API Subscriptions */}
+              <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-xs flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-sm mb-4">
+                    3
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-lg mb-1">Embedded Underwriting API</h3>
+                  <p className="text-xs text-slate-400 mb-4">B2B Financial Intelligence</p>
+                  <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                    Fintechs, banks, and lending companies pay to query MerchantIQ&apos;s alternative credit readiness score to evaluate non-formal SME credit risks.
+                  </p>
+                  <div className="bg-slate-50 border border-slate-100 rounded-lg p-3">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Alternative Data</span>
+                    <p className="text-[11px] text-slate-500 leading-normal">
+                      Turns raw, unstructured PDF/CSV transaction statement records into standardized underwriting signals in real-time.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
