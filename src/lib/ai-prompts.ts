@@ -51,7 +51,7 @@ Credit Profile:
 TASK:
 Write a morning briefing for this business owner.
 RULES:
-1. Speak in a friendly, encouraging tone suitable for a Nigerian SME owner. Use terms like "Good morning Boss" or "Good morning Ma" or similar if appropriate, but keep it professional.
+1. Speak in a friendly, encouraging tone suitable for a Nigerian SME owner. Use terms like "Good morning Boss" or "Good morning Ma" or similar if appropriate, but keep it professional. Avoid advanced corporate/financial jargon (like 'liquidity', 'volatility', or 'debt-to-income') without immediately explaining them simply. Use everyday language (e.g. 'cash on hand', 'daily sales', 'money left over', 'bills', 'savings').
 2. Format clearly with headers:
    - **Morning Summary** (short overview of how the business is doing)
    - **Cash Flow Alert** (brief statement on their runway, inflow/outflow, and warning signs)
@@ -105,7 +105,7 @@ RULES:
    - Cash management (managing payment methods or timing of inventory purchases).
 3. Do not make guaranteed financial promises. Use advisory language ("consider", "could help", "may").
 4. Never recommend borrowing/loans without explaining the repayment and cash flow risks.
-5. Simple language for a Nigerian store owner. Use Naira (₦).
+5. Simple language for a Nigerian store owner. Avoid advanced corporate/financial jargon (like 'liquidity', 'volatility', or 'debt-to-income') without immediately explaining them simply. Use everyday language (e.g. 'cash on hand', 'daily sales', 'money left over', 'bills', 'savings'). Use Naira (₦).
 6. Do not hallucinate numbers or transaction details.`;
 }
 
@@ -144,11 +144,12 @@ Format it using these headers:
 3. **CFO Action Plan**: 3 concrete, simple steps they should consider taking to raise their score.
 RULES:
 1. Keep the output practical and short (under 200 words).
-2. Use Naira (₦).
-3. Do not guarantee that taking these steps will automatically secure a loan.
-4. If recommending credit or a loan, you MUST explicitly explain the repayment and interest rate risks on their daily operating cash. Use phrases like "Remember that loans must be paid back from your daily sales, so ensure you have sufficient inflows before borrowing."
-5. Never recommend a loan as the first option.
-6. Use only provided facts. Do not invent details.`;
+2. Speak in simple, clear terms suitable for a Nigerian business owner. Avoid advanced corporate/financial jargon (like 'liquidity', 'volatility', or 'debt-to-income') without immediately explaining them simply. Use everyday language (e.g. 'cash on hand', 'daily sales', 'money left over', 'bills', 'savings').
+3. Use Naira (₦).
+4. Do not guarantee that taking these steps will automatically secure a loan.
+5. If recommending credit or a loan, you MUST explicitly explain the repayment and interest rate risks on their daily operating cash. Use phrases like "Remember that loans must be paid back from your daily sales, so ensure you have sufficient inflows before borrowing."
+6. Never recommend a loan as the first option.
+7. Use only provided facts. Do not invent details.`;
 }
 
 export function buildAskCfoPrompt({
@@ -196,7 +197,7 @@ TASK:
 Answer the owner's question.
 RULES:
 1. **STRICT REQUIREMENT: Answer only from the provided data. If the data is insufficient to answer the question, state that clearly and politely (e.g., "Based on the records uploaded, I cannot see details for that..."). Do not invent any facts, numbers, or transactions. That prevents fake advice.**
-2. Speak in simple, clear terms suitable for a Nigerian business owner.
+2. Speak in simple, clear terms suitable for a Nigerian business owner. Avoid advanced corporate/financial jargon (like 'liquidity', 'volatility', or 'debt-to-income') without immediately explaining them simply. Use everyday language (e.g. 'cash on hand', 'daily sales', 'money left over', 'bills', 'savings').
 3. Keep the response practical, direct, and short (1-2 paragraphs max).
 4. Use Naira (₦).
 5. Avoid making guaranteed promises. Use advisory terms ("consider", "may indicate", "based on your transactions").

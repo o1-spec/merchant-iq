@@ -35,6 +35,41 @@ export default function AskCfoPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isFirstMount = useRef(true);
+
+  // Load chat history from localStorage on mount
+  useEffect(() => {
+    const cached = localStorage.getItem('merchantiq_chat_history');
+    if (cached) {
+      try {
+        setMessages(JSON.parse(cached));
+      } catch (err) {
+        console.error('Failed to parse cached chat history:', err);
+      }
+    }
+    isFirstMount.current = false;
+  }, []);
+
+  // Save chat history to localStorage whenever it changes
+  useEffect(() => {
+    if (isFirstMount.current) return;
+    try {
+      if (messages.length > 0) {
+        localStorage.setItem('merchantiq_chat_history', JSON.stringify(messages));
+      } else {
+        localStorage.removeItem('merchantiq_chat_history');
+      }
+    } catch (err) {
+      console.error('Failed to cache chat history:', err);
+    }
+  }, [messages]);
+
+  const handleClearChat = () => {
+    if (window.confirm('Are you sure you want to clear your chat history?')) {
+      setMessages([]);
+    }
+  };
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -111,9 +146,19 @@ export default function AskCfoPage() {
             Ask questions about your cashflow, sales, expenses, and credit readiness.
           </p>
         </div>
-        <span className="text-[10px] text-slate-400 font-medium hidden sm:inline-block">
-          Answers are based on your recorded business data.
-        </span>
+        <div className="flex items-center gap-3">
+          {messages.length > 0 && (
+            <button
+              onClick={handleClearChat}
+              className="text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Clear Chat
+            </button>
+          )}
+          <span className="text-[10px] text-slate-400 font-medium hidden sm:inline-block">
+            Answers are based on your recorded business data.
+          </span>
+        </div>
       </div>
 
       
