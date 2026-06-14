@@ -11,13 +11,23 @@ export async function GET(req: NextRequest) {
       return errorResponse('Unauthorized', 401);
     }
     
-    const merchant = user.merchant;
+    const merchant = await prisma.merchant.findUnique({
+      where: { id: user.merchant.id },
+    });
+    
+    if (!merchant) {
+      return errorResponse('Merchant profile not found', 404);
+    }
+
     return successResponse({
       id: merchant.id,
       businessName: merchant.businessName,
       businessType: merchant.businessType,
       businessCategory: merchant.businessCategory,
       location: merchant.location,
+      currency: merchant.currency,
+      alertThreshold: merchant.alertThreshold,
+      smsNotifications: merchant.smsNotifications,
       createdAt: merchant.createdAt,
     });
   } catch (err) {

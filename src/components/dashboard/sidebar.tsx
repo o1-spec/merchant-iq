@@ -11,6 +11,7 @@ import {
   FileBarChart2,
   User,
   LogOut,
+  Lightbulb,
 } from 'lucide-react';
 
 interface NavItem {
@@ -24,11 +25,13 @@ const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
   { href: '/upload', label: 'Upload Data', icon: Upload },
+  { href: '/insights', label: 'Financial Insights', icon: Lightbulb },
   { href: '/ai-cfo', label: 'AI CFO', icon: Sparkles },
   { href: '/ask-cfo', label: 'Ask CFO', icon: MessageSquare },
   { href: '/reports', label: 'Reports', icon: FileBarChart2 },
   { href: '/profile', label: 'Profile', icon: User },
 ];
+
 
 interface SidebarContentProps {
   pathname: string;

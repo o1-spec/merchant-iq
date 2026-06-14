@@ -20,18 +20,22 @@ model User {
 }
 
 model Merchant {
-  id               String         @id @default(uuid())
-  userId           String         @unique
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id               String            @id @default(uuid())
+  userId           String            @unique
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   businessName     String
   businessType     String
   businessCategory String
   location         String
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   transactions     Transaction[]
   insights         Insight[]
   creditProfile    CreditProfile?
+  currency         String            @default("NGN")
+  alertThreshold   Float             @default(10000.0)
+  smsNotifications Boolean           @default(false)
+  loanApplications LoanApplication[]
 }
 
 model Transaction {
@@ -80,3 +84,19 @@ model CreditProfile {
   analysisDetails          String?  // JSON string
   updatedAt                DateTime @updatedAt
 }
+
+model LoanApplication {
+  id              String   @id @default(uuid())
+  merchantId      String
+  merchant        Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  lenderId        String
+  lenderName      String
+  requestedAmount Float
+  status          String   // PENDING, APPROVED, REJECTED
+  packagedProfile String   // JSON string
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([merchantId])
+}
+

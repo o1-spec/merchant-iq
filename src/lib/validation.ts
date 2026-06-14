@@ -49,3 +49,26 @@ export const profileUpdateSchema = z.object({
 });
 
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
+
+export const passwordUpdateSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(6, 'New password must be at least 6 characters'),
+});
+
+export type PasswordUpdateInput = z.infer<typeof passwordUpdateSchema>;
+
+export const preferencesUpdateSchema = z.object({
+  currency: z.string().min(1, 'Currency is required').optional(),
+  alertThreshold: z.number().positive('Alert threshold must be positive').optional(),
+  smsNotifications: z.boolean().optional(),
+});
+
+export type PreferencesUpdateInput = z.infer<typeof preferencesUpdateSchema>;
+
+export const loanApplicationSchema = z.object({
+  lenderId: z.string().min(1, 'Lender ID is required'),
+  requestedAmount: z.number().positive('Requested amount must be positive'),
+});
+
+export type LoanApplicationInput = z.infer<typeof loanApplicationSchema>;
+

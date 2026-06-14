@@ -1,4 +1,4 @@
-import { Lightbulb, Pin } from 'lucide-react';
+import { Lightbulb, Pin, Trash2 } from 'lucide-react';
 import type { Insight } from '@/lib/dashboard-client';
 import { MarkdownFormatter } from '@/components/ui/MarkdownFormatter';
 
@@ -19,7 +19,15 @@ const categoryColors: Record<string, string> = {
   GROWTH: 'bg-teal-50 text-teal-700 border-teal-100',
 };
 
-export function InsightCard({ insight }: { insight: Insight }) {
+export function InsightCard({
+  insight,
+  onPin,
+  onDelete,
+}: {
+  insight: Insight;
+  onPin?: () => void;
+  onDelete?: () => void;
+}) {
   const colorClass = categoryColors[insight.category] ?? 'bg-slate-50 text-slate-600 border-slate-200';
 
   return (
@@ -29,8 +37,32 @@ export function InsightCard({ insight }: { insight: Insight }) {
           <Lightbulb className="w-4 h-4 text-amber-400 shrink-0" />
           <p className="text-sm font-semibold text-slate-900 leading-snug">{insight.title}</p>
         </div>
-        {insight.isPinned && <Pin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />}
+        
+        <div className="flex items-center gap-1 shrink-0">
+          {onPin && (
+            <button
+              onClick={(e) => { e.preventDefault(); onPin(); }}
+              className={`p-1 rounded hover:bg-slate-150 transition-colors ${insight.isPinned ? 'text-emerald-600' : 'text-slate-400 md:opacity-0 group-hover:opacity-100'}`}
+              title={insight.isPinned ? "Unpin insight" : "Pin insight"}
+            >
+              <Pin className="w-3.5 h-3.5" fill={insight.isPinned ? "currentColor" : "none"} />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              onClick={(e) => { e.preventDefault(); onDelete(); }}
+              className="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors md:opacity-0 group-hover:opacity-100"
+              title="Delete insight"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+          {!onPin && insight.isPinned && (
+            <Pin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+          )}
+        </div>
       </div>
+
 
       <div className="text-sm text-slate-600 leading-relaxed">
         <MarkdownFormatter content={insight.content} />
