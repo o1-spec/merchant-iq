@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { login, demoLogin } from '@/lib/auth-client';
+import { login } from '@/lib/auth-client';
 import { AuthLeftPanel } from '@/components/auth/AuthLeftPanel';
 
 function Field({
@@ -77,7 +77,6 @@ export default function LoginPage() {
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [apiError, setApiError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [demoLoading, setDemoLoading] = useState(false);
 
   function validate() {
     const errs: { email?: string; password?: string } = {};
@@ -104,20 +103,7 @@ export default function LoginPage() {
     }
   }
 
-  async function handleDemo() {
-    setApiError('');
-    setDemoLoading(true);
-    try {
-      await demoLogin();
-      router.push('/dashboard');
-    } catch (err) {
-      setApiError(err instanceof Error ? err.message : 'Demo login failed. Please try again.');
-    } finally {
-      setDemoLoading(false);
-    }
-  }
-
-  const busy = loading || demoLoading;
+  const busy = loading;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col lg:flex-row">
@@ -199,35 +185,8 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-slate-200" />
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">or</span>
-            <div className="flex-1 h-px bg-slate-200" />
-          </div>
-
-          {/* Demo Login Option */}
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={handleDemo}
-              disabled={busy}
-              className="w-full flex items-center justify-center gap-2 bg-white hover:bg-slate-50
-                active:bg-slate-100 disabled:bg-slate-100 disabled:cursor-not-allowed
-                text-slate-700 font-semibold py-2.5 rounded-lg text-sm border border-slate-300
-                hover:border-slate-400 transition-all shadow-sm"
-            >
-              {demoLoading && <Loader2 className="w-4 h-4 animate-spin text-slate-500" />}
-              {demoLoading ? 'Loading demo…' : 'Continue as Demo Merchant'}
-            </button>
-
-            <p className="text-[11px] text-slate-400 text-center leading-relaxed">
-              Loads a sample provision store — no account needed.
-            </p>
-          </div>
-
           {/* Redirect to registration */}
-          <div className="h-px bg-slate-100" />
+          <div className="h-px bg-slate-100 mt-4" />
 
           <p className="text-sm text-slate-600 text-center">
             Don&apos;t have an account?{' '}
