@@ -7,9 +7,6 @@ export interface MerchantInfo {
   location?: string | null;
 }
 
-/**
- * Generates the prompt for the Morning Brief.
- */
 export function buildMorningBriefPrompt({
   merchant,
   summary,
@@ -66,9 +63,6 @@ RULES:
 7. Use only the provided numbers. Do not invent or hallucinate metrics.`;
 }
 
-/**
- * Generates the prompt for Growth Recommendations.
- */
 export function buildGrowthRecommendationsPrompt({
   merchant,
   summary,
@@ -115,9 +109,6 @@ RULES:
 6. Do not hallucinate numbers or transaction details.`;
 }
 
-/**
- * Generates the prompt for the Credit Coach explaining credit readiness.
- */
 export function buildCreditCoachPrompt({
   merchant,
   creditReadiness,
@@ -160,9 +151,6 @@ RULES:
 6. Use only provided facts. Do not invent details.`;
 }
 
-/**
- * Generates the prompt for a custom Question asked to the CFO.
- */
 export function buildAskCfoPrompt({
   merchant,
   question,

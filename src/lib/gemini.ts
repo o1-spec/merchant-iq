@@ -1,8 +1,5 @@
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-/**
- * Sends a prompt to the Gemini API and returns the generated text response.
- */
 export async function generateGeminiText(prompt: string): Promise<string> {
   if (!GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY is not configured in the environment. Please add it to your .env file.');

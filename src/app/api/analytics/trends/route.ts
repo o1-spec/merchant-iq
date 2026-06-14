@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
     const merchantId = user.merchant.id;
 
-    // Fetch all completed transactions for the current merchant
+    
     const transactions = await prisma.transaction.findMany({
       where: {
         merchantId,
@@ -22,15 +22,15 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Aggregations
+    
     const dailyRevMap: Record<string, number> = {};
     const dailyExpMap: Record<string, number> = {};
     const monthlyRevMap: Record<string, number> = {};
     const catBreakdownMap: Record<string, { category: string; amount: number; direction: string }> = {};
 
     for (const t of transactions) {
-      const dateStr = new Date(t.date).toISOString().split('T')[0]; // YYYY-MM-DD
-      const monthStr = dateStr.substring(0, 7); // YYYY-MM
+      const dateStr = new Date(t.date).toISOString().split('T')[0]; 
+      const monthStr = dateStr.substring(0, 7); 
 
       if (t.direction === 'INFLOW') {
         dailyRevMap[dateStr] = (dailyRevMap[dateStr] || 0) + t.amount;

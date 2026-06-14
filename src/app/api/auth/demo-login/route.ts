@@ -8,7 +8,7 @@ const DEMO_PASSWORD = 'DemoPass123';
 
 export async function POST() {
   try {
-    // Fetch or create demo user
+    
     let user = await prisma.user.findUnique({
       where: { email: DEMO_EMAIL },
       include: { merchant: true },
@@ -40,20 +40,20 @@ export async function POST() {
       return errorResponse('Demo merchant profile missing', 500);
     }
 
-    // Clear existing transactions to ensure fresh date ranges relative to 'now'
+    
     await prisma.transaction.deleteMany({
       where: { merchantId: merchant.id },
     });
 
-    // Generate 200 transactions
+    
     const sampleTransactions = generateSampleTransactions(merchant.id, 200);
     
-    // Bulk insert transactions
+    
     await prisma.transaction.createMany({
       data: sampleTransactions,
     });
 
-    // Create a sample CreditProfile if it doesn't exist yet
+    
     const existingProfile = await prisma.creditProfile.findUnique({
       where: { merchantId: merchant.id },
     });
@@ -77,7 +77,7 @@ export async function POST() {
       });
     }
 
-    // Refresh user object to include updated status if needed
+    
     const updatedUser = await prisma.user.findUnique({
       where: { id: user.id },
       include: { merchant: true },
@@ -87,13 +87,13 @@ export async function POST() {
       return errorResponse('Demo user retrieval error', 500);
     }
 
-    // Generate token
+    
     const token = signToken({ userId: updatedUser.id, role: updatedUser.role });
 
-    // Set cookie
+    
     await setAuthCookie(token);
 
-    // Safe response without passwordHash
+    
     const safeUser = {
       id: updatedUser.id,
       name: updatedUser.name,

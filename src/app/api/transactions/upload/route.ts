@@ -31,12 +31,12 @@ export async function POST(req: NextRequest) {
       return errorResponse('No file uploaded', 400);
     }
 
-    // 1. Validate file size (max 5MB)
+    
     if (file.size > 5 * 1024 * 1024) {
       return errorResponse('File size exceeds the 5MB limit', 400);
     }
 
-    // 2. Validate file extension (.csv)
+    
     if (!file.name.toLowerCase().endsWith('.csv')) {
       return errorResponse('Invalid file format. Only .csv files are accepted.', 400);
     }
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       dynamicTyping: false,
     });
 
-    // 3. Validate required CSV headers exist
+    
     const requiredHeaders = ['amount', 'type', 'category', 'direction', 'paymentMethod', 'source', 'status'];
     const headers = parsed.meta.fields || [];
     const missingHeaders = requiredHeaders.filter(h => !headers.includes(h));
@@ -80,16 +80,16 @@ export async function POST(req: NextRequest) {
         status?: unknown;
       };
       
-      // If the row is completely empty, skip it
+      
       if (!row || Object.values(row).every(v => v === undefined || v === '')) {
         continue;
       }
 
-      // Convert amount string to number (remove commas if any)
+      
       const rawAmount = row.amount;
       const amount = typeof rawAmount === 'number' ? rawAmount : Number(String(rawAmount || '').replace(/,/g, '').trim());
 
-      // Parse date string
+      
       const rawDate = row.date;
       let date: Date | null = null;
       if (rawDate instanceof Date) {

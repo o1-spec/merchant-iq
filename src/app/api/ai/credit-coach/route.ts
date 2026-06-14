@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
     const merchant = user.merchant;
 
-    // Fetch transactions to calculate latest credit readiness
+    
     const transactions = await prisma.transaction.findMany({
       where: { merchantId: merchant.id },
     });
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       const body = await req.json();
       forceRegenerate = !!body.forceRegenerate;
     } catch {
-      // Optional body
+      
     }
 
     if (!forceRegenerate) {
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Formulate prompt
+    
     const prompt = buildCreditCoachPrompt({
       merchant,
       creditReadiness,
@@ -64,10 +64,10 @@ export async function POST(req: NextRequest) {
       cashflow,
     });
 
-    // Request text from Gemini
+    
     const coachText = await generateGeminiText(prompt);
 
-    // Save insight record
+    
     const insight = await prisma.insight.create({
       data: {
         merchantId: merchant.id,

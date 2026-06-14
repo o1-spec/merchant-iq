@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
       return errorResponse('Unauthorized', 401);
     }
 
-    // Guard: Only allow demo merchant user or JUDGE role to reset demo data
+    
     if (user.email !== 'demo@merchantiq.app' && user.role !== 'JUDGE') {
       return errorResponse('Forbidden: Only the demo merchant account or judges can reset the demo data.', 403);
     }
 
     const merchantId = user.merchant.id;
 
-    // Reset and seed
+    
     const result = await seedDemoMerchantData(merchantId);
 
     return successResponse({

@@ -102,12 +102,12 @@ const mockTransactions: TransactionData[] = [
 async function main() {
   console.log('--- Phase 4 Sanity Checks ---');
 
-  // Compute analytics
+  
   const summary = calculateSummary(mockTransactions);
   const cashflow = calculateCashflow(mockTransactions);
   const creditReadiness = calculateCreditReadiness(mockTransactions);
 
-  // 1. Verify Prompt Construction compiles correctly
+  
   console.log('Compiling Morning Brief prompt...');
   const briefPrompt = buildMorningBriefPrompt({
     merchant: mockMerchant,
@@ -148,7 +148,7 @@ async function main() {
 
   console.log('All prompts constructed successfully!');
 
-  // 2. Test Gemini API if API key is present
+  
   const apiKey = process.env.GEMINI_API_KEY;
   if (apiKey) {
     console.log('GEMINI_API_KEY detected. Running live test with short query...');
@@ -163,7 +163,7 @@ async function main() {
     console.log('GEMINI_API_KEY not found in environment. Skipping live API check.');
   }
 
-  // 3. Database connection check
+  
   try {
     const userCount = await prisma.user.count();
     console.log(`\nSuccessfully reached Supabase database. User count: ${userCount}`);

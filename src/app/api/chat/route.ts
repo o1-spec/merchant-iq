@@ -15,7 +15,7 @@ export async function POST(req: Request) {
 
     const systemInstruction = "You are a highly professional, expert AI Chief Financial Officer for a small business in Africa using OPay Business OS. Provide clear, concise, corporate, and highly actionable financial advice. Use formatting like bullet points when helpful. Maintain a professional, trustworthy, and supportive tone. Keep answers relatively brief but dense with value.";
 
-    // Format messages for Gemini API
+    
     const formattedMessages = messages.map((msg: any) => ({
       role: msg.role === 'user' ? 'user' : 'model',
       parts: [{ text: msg.content }]

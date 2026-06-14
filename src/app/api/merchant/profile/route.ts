@@ -43,7 +43,7 @@ export async function PATCH(req: NextRequest) {
 
     const data = result.data;
 
-    // Filter out undefined values to only update provided fields
+    
     const updateData: {
       businessName?: string;
       businessType?: string;

@@ -1,8 +1,5 @@
 import { prisma } from "./prisma";
 
-/**
- * Generates 200 sample transactions spanning the last 90 days.
- */
 export function generateSampleTransactions(merchantId: string, count = 200) {
   const transactions = [];
   const categories = {
@@ -103,24 +100,21 @@ export function generateSampleTransactions(merchantId: string, count = 200) {
   return transactions;
 }
 
-/**
- * Resets and seeds all demo data for a merchant.
- */
 export async function seedDemoMerchantData(merchantId: string) {
   return await prisma.$transaction(
     async (tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]) => {
-      // 1. Delete existing data
+      
       await tx.transaction.deleteMany({ where: { merchantId } });
       await tx.insight.deleteMany({ where: { merchantId } });
       await tx.creditProfile.deleteMany({ where: { merchantId } });
 
-      // 2. Generate and write 200 transactions
+      
       const transactions = generateSampleTransactions(merchantId, 200);
       await tx.transaction.createMany({
         data: transactions,
       });
 
-      // 3. Create sample credit profile
+      
       await tx.creditProfile.create({
         data: {
           merchantId,
@@ -142,7 +136,7 @@ export async function seedDemoMerchantData(merchantId: string) {
         },
       });
 
-      // 4. Create starter insights
+      
       await tx.insight.create({
         data: {
           merchantId,

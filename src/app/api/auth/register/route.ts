@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       location,
     } = result.data;
 
-    // Check if email already exists
+    
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
     });
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       return errorResponse("Email already registered", 400);
     }
 
-    // Hash the password
+    
     const passwordHash = await hashPassword(password);
 
     const user = await prisma.$transaction(async (tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]) => {
@@ -59,13 +59,13 @@ export async function POST(req: NextRequest) {
       });
     });
 
-    // Generate token
+    
     const token = signToken({ userId: user.id, role: user.role });
 
-    // Set HTTP-only JWT Cookie
+    
     await setAuthCookie(token);
 
-    // Exclude passwordHash from returned response
+    
     const safeUser = {
       id: user.id,
       email: user.email,

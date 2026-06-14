@@ -12,13 +12,13 @@ export async function GET(req: NextRequest) {
     }
     const merchant = user.merchant;
 
-    // Fetch transactions for calculations
+    
     const transactions = await prisma.transaction.findMany({
       where: { merchantId: merchant.id },
       orderBy: { date: 'desc' },
     });
 
-    // Fetch latest AI insights
+    
     const aiInsights = await prisma.insight.findMany({
       where: {
         merchantId: merchant.id,
@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       take: 10,
     });
 
-    // Compute metrics
+    
     const txData = transactions as unknown as TransactionData[];
     const summary = calculateSummary(txData);
     const cashflow = calculateCashflow(txData);

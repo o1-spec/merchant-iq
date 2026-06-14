@@ -16,14 +16,14 @@ export async function POST(req: NextRequest) {
     }
     const merchant = user.merchant;
 
-    // Fetch transactions
+    
     const transactions = await prisma.transaction.findMany({
       where: { merchantId: merchant.id },
     });
 
     const txData = transactions as unknown as TransactionData[];
 
-    // Run metrics calculations
+    
     const summary = calculateSummary(txData);
     const cashflow = calculateCashflow(txData);
 
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       const body = await req.json();
       forceRegenerate = !!body.forceRegenerate;
     } catch {
-      // Optional body
+      
     }
 
     if (!forceRegenerate) {
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Formulate prompt
+    
     const prompt = buildGrowthRecommendationsPrompt({
       merchant,
       summary,
@@ -65,10 +65,10 @@ export async function POST(req: NextRequest) {
       transactions: txData,
     });
 
-    // Request text from Gemini
+    
     const recommendationsText = await generateGeminiText(prompt);
 
-    // Save insight record
+    
     const insight = await prisma.insight.create({
       data: {
         merchantId: merchant.id,

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     const { email, password } = result.data;
 
-    // Find the user by email
+    
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       include: {
@@ -26,19 +26,19 @@ export async function POST(req: NextRequest) {
       return errorResponse('Invalid email or password', 401);
     }
 
-    // Verify the password
+    
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) {
       return errorResponse('Invalid email or password', 401);
     }
 
-    // Generate token
+    
     const token = signToken({ userId: user.id, role: user.role });
 
-    // Set HTTP-only JWT cookie
+    
     await setAuthCookie(token);
 
-    // Safe response without passwordHash
+    
     const safeUser = {
       id: user.id,
       name: user.name,

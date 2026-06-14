@@ -17,7 +17,7 @@ export async function PATCH(
 
     const { id } = await params;
 
-    // Find transaction and verify ownership
+    
     const transaction = await prisma.transaction.findUnique({
       where: { id },
     });
@@ -28,7 +28,7 @@ export async function PATCH(
 
     const body = await req.json();
 
-    // Prepare state to validate
+    
     const toValidate = {
       amount: body.amount !== undefined ? body.amount : transaction.amount,
       type: body.type !== undefined ? body.type : transaction.type,
@@ -48,7 +48,7 @@ export async function PATCH(
 
     const data = result.data;
 
-    // Update transaction record
+    
     const updatedTransaction = await prisma.transaction.update({
       where: { id },
       data: {
@@ -85,7 +85,7 @@ export async function DELETE(
 
     const { id } = await params;
 
-    // Find transaction and verify ownership
+    
     const transaction = await prisma.transaction.findUnique({
       where: { id },
     });
@@ -94,7 +94,7 @@ export async function DELETE(
       return errorResponse('Transaction not found', 404);
     }
 
-    // Delete transaction
+    
     await prisma.transaction.delete({
       where: { id },
     });

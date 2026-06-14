@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     }
     const merchantId = user.merchant.id;
 
-    // Fetch all transactions for the current merchant
+    
     const transactions = await prisma.transaction.findMany({
       where: { merchantId },
     });

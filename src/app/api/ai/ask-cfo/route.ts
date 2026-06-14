@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     const { question } = result.data;
 
-    // Fetch transactions
+    
     const transactions = await prisma.transaction.findMany({
       where: { merchantId: merchant.id },
       orderBy: { date: 'desc' },
@@ -37,15 +37,15 @@ export async function POST(req: NextRequest) {
 
     const txData = transactions as unknown as TransactionData[];
 
-    // Compute metrics
+    
     const summary = calculateSummary(txData);
     const cashflow = calculateCashflow(txData);
     const creditReadiness = calculateCreditReadiness(txData);
     
-    // Grab top 20 transactions for detailed history context
+    
     const recentTransactions = txData.slice(0, 20);
 
-    // Formulate prompt with strict data grounding
+    
     const prompt = buildAskCfoPrompt({
       merchant,
       question,
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       recentTransactions,
     });
 
-    // Request text from Gemini
+    
     const answer = await generateGeminiText(prompt);
 
     return successResponse({

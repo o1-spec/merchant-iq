@@ -1,54 +1,550 @@
-import { MetricCard } from "@/components/dashboard/MetricCard";
-import { TransactionTable } from "@/components/dashboard/TransactionTable";
-import { AIInsightCard } from "@/components/dashboard/AIInsightCard";
+'use client';
 
-export default function Home() {
+import { useState } from 'react';
+import Link from 'next/link';
+import {
+  Menu,
+  X,
+  BarChart2,
+  AlertTriangle,
+  TrendingUp,
+  FileText,
+  Upload,
+  Sparkles,
+  Check,
+  ArrowRight,
+  ShoppingBag,
+  CreditCard,
+  Package,
+} from 'lucide-react';
+
+const problems = [
+  {
+    icon: AlertTriangle,
+    title: 'Cash runs out unexpectedly',
+    description:
+      'Money leaves the account before you have a chance to plan. Rent, supplier payments, and restocking all hit at once.',
+  },
+  {
+    icon: Package,
+    title: 'Stock decisions are based on guesswork',
+    description:
+      'You reorder when shelves look empty, not based on what actually sold. That leads to overstocking slow items and running out of bestsellers.',
+  },
+  {
+    icon: CreditCard,
+    title: 'Credit applications lack clear financial proof',
+    description:
+      'When you apply for a loan, lenders ask for income proof you do not have in a form they accept. MerchantIQ helps you build that record.',
+  },
+];
+
+const features = [
+  {
+    icon: BarChart2,
+    title: 'Cashflow Warnings',
+    description:
+      'See upcoming payments before they arrive. MerchantIQ flags rent, supplier dues, and low balance periods based on your transaction history.',
+  },
+  {
+    icon: FileText,
+    title: 'Daily Business Brief',
+    description:
+      'A short morning summary of what your business did yesterday, what to expect today, and one thing to act on. No jargon.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Credit Readiness Coach',
+    description:
+      'Get a plain-language view of what your financials look like to a lender, and specific steps to improve your position over time.',
+  },
+];
+
+const steps = [
+  {
+    number: 1,
+    icon: Upload,
+    title: 'Upload bank or POS statement',
+    description:
+      'Export a CSV from your bank or POS app and upload it. It takes under a minute.',
+  },
+  {
+    icon: BarChart2,
+    number: 2,
+    title: 'MerchantIQ organises the data',
+    description:
+      'Transactions are categorised, patterns are identified, and your cashflow picture comes together automatically.',
+  },
+  {
+    icon: Sparkles,
+    number: 3,
+    title: 'Gemini explains what to do next',
+    description:
+      'You get a clear summary and practical suggestions written in plain language — not a financial report.',
+  },
+];
+
+function smoothScrollTo(id: string) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+export default function LandingPage() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [briefState, setBriefState] = useState<'initial' | 'loading' | 'updated'>('initial');
+
+  const handleRefreshBrief = () => {
+    setBriefState('loading');
+    setTimeout(() => setBriefState('updated'), 1600);
+  };
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Good morning, John!</h1>
-        <p className="text-muted-foreground mt-1">Here is what's happening with your business today.</p>
-      </div>
+    <div className="min-h-screen bg-white text-slate-900 font-sans">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard 
-          title="Total Balance" 
-          value="₦2,450,000.00" 
-          change="+12.5%" 
-          trend="up" 
-          icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>}
-        />
-        <MetricCard 
-          title="Total Inflow" 
-          value="₦840,500.00" 
-          change="+8.2%" 
-          trend="up" 
-          icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>}
-        />
-        <MetricCard 
-          title="Total Outflow" 
-          value="₦120,400.00" 
-          change="-2.4%" 
-          trend="down" 
-          icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><polyline points="19 15 12 22 5 15"/></svg>}
-        />
-        <MetricCard 
-          title="Active Customers" 
-          value="1,204" 
-          change="+4.1%" 
-          trend="up" 
-          icon={<svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>}
-        />
-      </div>
+      
+      <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <TransactionTable />
+          
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-md bg-emerald-600 flex items-center justify-center shrink-0">
+              <span className="text-white font-bold text-sm">M</span>
+            </div>
+            <span className="font-bold text-slate-900 text-lg">MerchantIQ</span>
+          </Link>
+
+          
+          <nav className="hidden md:flex items-center gap-8">
+            <button onClick={() => smoothScrollTo('features')} className="text-sm text-slate-600 hover:text-slate-900 transition-colors">
+              Features
+            </button>
+            <button onClick={() => smoothScrollTo('how-it-works')} className="text-sm text-slate-600 hover:text-slate-900 transition-colors">
+              How It Works
+            </button>
+            <button onClick={() => smoothScrollTo('why-merchantiq')} className="text-sm text-slate-600 hover:text-slate-900 transition-colors">
+              Why MerchantIQ
+            </button>
+          </nav>
+
+          
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/login"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2 transition-colors"
+            >
+              Login
+            </Link>
+            <Link
+              href="/login"
+              className="text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors"
+            >
+              Try Demo
+            </Link>
+          </div>
+
+          
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-slate-600 hover:text-slate-900"
+            aria-label="Toggle navigation"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
-        <div>
-          <AIInsightCard />
+
+        
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-slate-200 bg-white px-4 py-5 space-y-4">
+            <nav className="flex flex-col gap-3">
+              <button onClick={() => { smoothScrollTo('features'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">Features</button>
+              <button onClick={() => { smoothScrollTo('how-it-works'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">How It Works</button>
+              <button onClick={() => { smoothScrollTo('why-merchantiq'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">Why MerchantIQ</button>
+            </nav>
+            <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
+              <Link href="/login" className="text-sm text-center text-slate-700 py-2">Login</Link>
+              <Link href="/login" className="text-sm text-center font-semibold bg-emerald-600 text-white py-2.5 rounded-md">Try Demo</Link>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main>
+
+        
+        <section className="pt-16 pb-20 md:pt-24 md:pb-28 border-b border-slate-100 overflow-hidden">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+              
+              <div>
+                <p className="text-sm font-medium text-emerald-700 mb-5">
+                  Built for traders, provision stores, POS agents, and small retailers.
+                </p>
+
+                <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight mb-5">
+                  Know what your business is really doing
+                </h1>
+
+                <p className="text-lg text-slate-600 leading-relaxed mb-8">
+                  MerchantIQ turns transaction records into cashflow warnings, growth suggestions,
+                  and credit-readiness guidance for small business owners.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3 mb-12">
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold px-7 py-3.5 rounded-lg transition-all shadow-sm hover:shadow-md text-sm"
+                  >
+                    Try Demo
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-semibold px-7 py-3.5 rounded-lg transition-all text-sm"
+                  >
+                    Create Account
+                  </Link>
+                </div>
+
+                
+                <div className="grid grid-cols-3 gap-6 border-t border-slate-100 pt-8">
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">₦184k</p>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-snug">Avg daily sales tracked</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">3 mins</p>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-snug">To get your first brief</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">Free</p>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-snug">To start, no card needed</p>
+                  </div>
+                </div>
+              </div>
+
+              
+              <div className="hidden lg:block">
+                <div className="bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+
+                  
+                  <div className="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">F</div>
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">Femi&apos;s Store</p>
+                        <p className="text-xs text-slate-400">Balogun Market · Lagos</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">Live</span>
+                  </div>
+
+                  
+                  <div className="grid grid-cols-2 gap-px bg-slate-100">
+                    <div className="bg-white px-5 py-4">
+                      <p className="text-xs text-slate-400 mb-1">Yesterday&apos;s sales</p>
+                      <p className="text-xl font-bold text-slate-900">₦184,000</p>
+                      <p className="text-xs text-emerald-600 font-medium mt-0.5">↑ 18% vs Mon</p>
+                    </div>
+                    <div className="bg-white px-5 py-4">
+                      <p className="text-xs text-slate-400 mb-1">Cash balance</p>
+                      <p className="text-xl font-bold text-slate-900">₦310,500</p>
+                      <p className="text-xs text-slate-400 font-medium mt-0.5">After expenses</p>
+                    </div>
+                    <div className="bg-white px-5 py-4">
+                      <p className="text-xs text-slate-400 mb-1">Cash runway</p>
+                      <p className="text-xl font-bold text-slate-900">42 days</p>
+                      <span className="inline-block text-[10px] font-semibold text-green-700 bg-green-50 border border-green-100 px-1.5 py-0.5 rounded mt-0.5">Low risk</span>
+                    </div>
+                    <div className="bg-white px-5 py-4">
+                      <p className="text-xs text-slate-400 mb-1">Credit readiness</p>
+                      <p className="text-xl font-bold text-slate-900">740</p>
+                      <p className="text-xs text-slate-400 font-medium mt-0.5">of 850 · Excellent</p>
+                    </div>
+                  </div>
+
+                  
+                  <div className="border-t border-slate-200 bg-amber-50 px-5 py-3.5 flex items-start gap-2.5">
+                    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-semibold text-amber-800">Cashflow warning</p>
+                      <p className="text-xs text-amber-700 mt-0.5">Shop rent of ₦120,000 is due in 6 days. Restock beverages before Friday peak.</p>
+                    </div>
+                  </div>
+
+                  
+                  <div className="px-5 py-3 flex items-center gap-1.5 border-t border-slate-100">
+                    <Sparkles className="w-3.5 h-3.5 text-slate-400" />
+                    <p className="text-xs text-slate-400">Powered by Gemini · Updated 7:02 AM</p>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="why-merchantiq" className="py-20 bg-slate-50 border-b border-slate-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="max-w-xl mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+                Most merchants see transactions. Few see the full picture.
+              </h2>
+              <p className="text-slate-600 text-base">
+                Your payment app tells you what came in and went out. MerchantIQ helps you understand what it means for tomorrow.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {problems.map((p) => {
+                const Icon = p.icon;
+                return (
+                  <div key={p.title} className="bg-white border border-slate-200 rounded-xl p-6">
+                    <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center mb-4">
+                      <Icon className="w-5 h-5 text-slate-700" />
+                    </div>
+                    <h3 className="font-semibold text-slate-900 mb-2">{p.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">{p.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="features" className="py-20 border-b border-slate-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="max-w-xl mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+                Three things MerchantIQ does for you
+              </h2>
+              <p className="text-slate-600 text-base">
+                No accounting degree needed. Upload your data and get clear answers.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {features.map((f, i) => {
+                const Icon = f.icon;
+                return (
+                  <div key={f.title} className="border border-slate-200 rounded-xl p-6 bg-white">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                        <Icon className="w-5 h-5 text-emerald-700" />
+                      </div>
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">0{i + 1}</span>
+                    </div>
+                    <h3 className="font-semibold text-slate-900 mb-2">{f.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">{f.description}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        
+        <section className="py-20 bg-slate-50 border-b border-slate-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
+
+              
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
+                  Your morning business summary, every day
+                </h2>
+                <p className="text-slate-600 text-base leading-relaxed mb-6">
+                  Instead of opening your POS reports and trying to work it out yourself, MerchantIQ sends
+                  you a plain-language summary of what happened yesterday and what needs your attention today.
+                </p>
+
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'How much you made yesterday',
+                    'Whether a payment or expense is coming up soon',
+                    'One practical suggestion for the day',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2.5 text-sm text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={handleRefreshBrief}
+                  disabled={briefState === 'loading'}
+                  className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 text-white px-5 py-2.5 rounded-md text-sm font-semibold transition-colors"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {briefState === 'initial' && 'See a sample brief'}
+                  {briefState === 'loading' && 'Generating...'}
+                  {briefState === 'updated' && 'See another version'}
+                </button>
+              </div>
+
+              
+              <div className="max-w-sm w-full">
+
+                
+                <div className="bg-[#e5ddd5] rounded-2xl p-4 shadow-md border border-slate-200">
+
+                  
+                  <div className="flex items-center gap-3 bg-[#075e54] rounded-xl px-4 py-3 mb-4">
+                    <div className="w-9 h-9 rounded-full bg-emerald-300 flex items-center justify-center shrink-0">
+                      <span className="text-emerald-900 font-bold text-sm">M</span>
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-sm">MerchantIQ</p>
+                      <p className="text-emerald-200 text-xs">Daily brief · just now</p>
+                    </div>
+                  </div>
+
+                  
+                  <div className="bg-white rounded-xl rounded-tl-sm px-4 py-3.5 shadow-sm text-sm text-slate-800 leading-relaxed space-y-2">
+                    {briefState === 'loading' ? (
+                      <div className="flex items-center gap-2 py-3 text-slate-400 text-xs">
+                        <span className="flex gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0ms]" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:150ms]" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:300ms]" />
+                        </span>
+                        MerchantIQ is thinking...
+                      </div>
+                    ) : briefState === 'updated' ? (
+                      <>
+                        <p className="font-semibold text-slate-900">Good morning, Femi. 👋</p>
+                        <p>Here is how yesterday went and what to watch today.</p>
+                        <div className="border-t border-slate-100 pt-2 space-y-1.5">
+                          <p>📊 <span className="font-medium">Sales yesterday:</span> ₦184,000</p>
+                          <p>📉 <span className="font-medium">Cashflow warning:</span> Rent is due in 6 days. You have ₦310,000 in balance — that covers it, but do not spend down further before then.</p>
+                          <p>💡 <span className="font-medium">Suggestion:</span> Beverages sold out twice last week. Restock before Friday to avoid missing peak weekend sales.</p>
+                        </div>
+                        <p className="text-xs text-slate-400 pt-1">Powered by Gemini · Updated 7:02 AM</p>
+                      </>
+                    ) : (
+                      <>
+                        <p className="font-semibold text-slate-900">Good morning, Femi. 👋</p>
+                        <div className="border-t border-slate-100 pt-2 space-y-1.5">
+                          <p>📊 <span className="font-medium">Yesterday&apos;s sales:</span> ₦184,000</p>
+                          <p>⚠️ <span className="font-medium">Cashflow warning:</span> Rent is due in 6 days.</p>
+                          <p>💡 <span className="font-medium">Suggestion:</span> Restock beverages before Friday peak sales.</p>
+                        </div>
+                        <p className="text-xs text-slate-400 pt-1">Powered by Gemini · 7:02 AM</p>
+                      </>
+                    )}
+                  </div>
+
+                  
+                  <p className="text-right text-xs text-slate-500 mt-2 px-1">✓✓ Delivered</p>
+                </div>
+
+                <p className="text-xs text-slate-400 mt-3 text-center">
+                  This is a preview. Your actual brief is based on your own transaction data.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        
+        <section id="how-it-works" className="py-20 border-b border-slate-100">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <div className="max-w-xl mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+                How it works
+              </h2>
+              <p className="text-slate-600 text-base">
+                No installation, no technical setup. Just upload what you already have.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {steps.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <div key={s.title} className="flex gap-5">
+                    <div className="flex flex-col items-center">
+                      <div className="w-9 h-9 rounded-full border-2 border-emerald-600 flex items-center justify-center shrink-0 text-emerald-700 font-bold text-sm">
+                        {s.number}
+                      </div>
+                      <div className="w-px flex-1 bg-slate-200 mt-3 mb-0 hidden md:block" />
+                    </div>
+                    <div className="pb-8 md:pb-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon className="w-4 h-4 text-slate-400" />
+                        <h3 className="font-semibold text-slate-900 text-sm">{s.title}</h3>
+                      </div>
+                      <p className="text-sm text-slate-600 leading-relaxed">{s.description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        
+        <section className="relative py-24 overflow-hidden bg-slate-900">
+          
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(16,185,129,0.12) 0%, transparent 70%)' }} />
+
+          <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
+            
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-600/30 mb-6">
+              <ShoppingBag className="w-7 h-7 text-emerald-400" />
+            </div>
+
+            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-5 leading-tight">
+              Every small business owner deserves to understand their own money.
+            </h2>
+            <p className="text-slate-400 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+              MerchantIQ is free to try. Upload your first statement and see what your transactions are telling you — in plain language.
+            </p>
+
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/login"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-lg shadow-emerald-900/40 hover:shadow-emerald-900/60 text-base"
+              >
+                Try Demo
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/login"
+                className="w-full sm:w-auto inline-flex items-center justify-center border border-white/20 hover:border-white/40 hover:bg-white/5 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base"
+              >
+                Create Account
+              </Link>
+            </div>
+
+            
+            <p className="text-slate-500 text-sm mt-6">No credit card required &nbsp;·&nbsp; Takes under 3 minutes</p>
+          </div>
+        </section>
+
+      </main>
+
+      
+      <footer className="bg-white border-t border-slate-200 py-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-emerald-600 flex items-center justify-center">
+              <span className="text-white font-bold text-xs">M</span>
+            </div>
+            <span className="font-bold text-slate-800 text-sm">MerchantIQ</span>
+          </div>
+          <p className="text-xs text-slate-400 text-center sm:text-right">
+            AI-powered business intelligence for African SMEs. &copy; {new Date().getFullYear()} MerchantIQ.
+          </p>
         </div>
-      </div>
+      </footer>
+
     </div>
   );
 }

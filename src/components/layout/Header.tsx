@@ -2,8 +2,8 @@ export function Header() {
   return (
     <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 sticky top-0 z-10 w-full">
       <div className="flex items-center gap-4 md:hidden">
-        {/* Mobile menu button could go here */}
-        <span className="font-bold text-primary">OPay OS</span>
+        
+        <span className="font-bold text-primary">MerchantIQ</span>
       </div>
       
       <div className="flex-1 flex justify-end items-center gap-6">

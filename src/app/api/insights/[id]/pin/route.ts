@@ -16,17 +16,17 @@ export async function PATCH(
 
     const { id } = await params;
 
-    // Find the insight record
+    
     const insight = await prisma.insight.findUnique({
       where: { id },
     });
 
-    // Verify ownership
+    
     if (!insight || insight.merchantId !== merchantId) {
       return errorResponse('Insight not found', 404);
     }
 
-    // Toggle pinned status
+    
     const updatedInsight = await prisma.insight.update({
       where: { id },
       data: {

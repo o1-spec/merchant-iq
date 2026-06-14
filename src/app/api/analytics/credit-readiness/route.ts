@@ -12,17 +12,17 @@ export async function GET(req: NextRequest) {
     }
     const merchantId = user.merchant.id;
 
-    // Fetch all transactions for the current merchant
+    
     const transactions = await prisma.transaction.findMany({
       where: { merchantId },
     });
 
     const txData = transactions as unknown as TransactionData[];
 
-    // Calculate the credit readiness metrics
+    
     const creditReadiness = calculateCreditReadiness(txData);
 
-    // Compute supplementary fields for the database model
+    
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const completed = txData.filter(t => t.status === 'COMPLETED');
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     const dscr = outflow30 > 0 ? Math.round((revenue30 / outflow30) * 100) / 100 : 2.0;
     const recommendedLoan = Math.round((revenue30 * 1.5) * 100) / 100;
 
-    // Upsert the CreditProfile record
+    
     const profile = await prisma.creditProfile.upsert({
       where: { merchantId },
       update: {

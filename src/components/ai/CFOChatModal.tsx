@@ -63,7 +63,7 @@ export function CFOChatModal({ isOpen, onClose }: CFOChatModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-card border border-border w-full max-w-2xl rounded-2xl shadow-xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200 max-h-[85vh]">
-        {/* Header */}
+        
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-muted/30">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground shadow-sm">
@@ -82,7 +82,7 @@ export function CFOChatModal({ isOpen, onClose }: CFOChatModalProps) {
           </button>
         </div>
 
-        {/* Chat Area */}
+        
         <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-card min-h-[400px]">
           {messages.map((msg, idx) => (
             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -107,7 +107,7 @@ export function CFOChatModal({ isOpen, onClose }: CFOChatModalProps) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area */}
+        
         <div className="p-4 border-t border-border bg-card">
           <form onSubmit={handleSubmit} className="relative flex items-center">
             <input

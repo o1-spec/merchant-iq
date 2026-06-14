@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET() {
   let databaseHealthy = false;
   try {
-    // Audit database connection via query raw select
+    
     await prisma.$queryRaw`SELECT 1`;
     databaseHealthy = true;
   } catch (error) {

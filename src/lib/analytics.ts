@@ -44,20 +44,14 @@ export interface CreditReadinessData {
   nextSteps: string[];
 }
 
-/**
- * Calculates trend percentage change between current and previous periods.
- */
 export function calculateTrendPercent(currentPeriod: number, previousPeriod: number): number {
   if (previousPeriod === 0) {
     return currentPeriod > 0 ? 100 : 0;
   }
   const diff = currentPeriod - previousPeriod;
-  return Math.round((diff / previousPeriod) * 1000) / 10; // 1 decimal place (e.g. 12.5)
+  return Math.round((diff / previousPeriod) * 1000) / 10; 
 }
 
-/**
- * Identifies the weekday with the highest completed income volume.
- */
 export function getBestSalesDay(transactions: TransactionData[]): { dayOfWeek: string; count: number; totalAmount: number } | null {
   const inflows = transactions.filter(t => t.direction === 'INFLOW' && t.status === 'COMPLETED');
   if (inflows.length === 0) return null;
@@ -93,9 +87,6 @@ export function getBestSalesDay(transactions: TransactionData[]): { dayOfWeek: s
   };
 }
 
-/**
- * Groups and sums transaction volumes by category for inflows and outflows.
- */
 export function getTopCategories(transactions: TransactionData[]): {
   INCOME: { category: string; amount: number }[];
   EXPENSE: { category: string; amount: number }[];
@@ -123,9 +114,6 @@ export function getTopCategories(transactions: TransactionData[]): {
   };
 }
 
-/**
- * Computes general stats: revenue, expenses, net profit, position, counts, and trend percentages.
- */
 export function calculateSummary(transactions: TransactionData[]): SummaryData {
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -133,7 +121,7 @@ export function calculateSummary(transactions: TransactionData[]): SummaryData {
 
   const completed = transactions.filter(t => t.status === 'COMPLETED');
 
-  // Overall totals
+  
   let totalRevenue = 0;
   let totalExpenses = 0;
   for (const t of completed) {
@@ -147,7 +135,7 @@ export function calculateSummary(transactions: TransactionData[]): SummaryData {
   const netProfit = totalRevenue - totalExpenses;
   const cashPosition = netProfit;
 
-  // Trend computations (past 30 days vs 30-60 days)
+  
   let currentRev = 0;
   let prevRev = 0;
   let currentExp = 0;
@@ -194,9 +182,6 @@ export function calculateSummary(transactions: TransactionData[]): SummaryData {
   };
 }
 
-/**
- * Computes cash position, average daily inflows/outflows, runway in days, and warning indicators.
- */
 export function calculateCashflow(transactions: TransactionData[]): CashflowData {
   const completed = transactions.filter(t => t.status === 'COMPLETED');
 
@@ -211,7 +196,7 @@ export function calculateCashflow(transactions: TransactionData[]): CashflowData
   }
   const currentCash = totalInflow - totalOutflow;
 
-  // Past 30 days
+  
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
@@ -262,15 +247,12 @@ export function calculateCashflow(transactions: TransactionData[]): CashflowData
   };
 }
 
-/**
- * Computes deterministic credit readiness metrics (score 300 to 850).
- */
 export function calculateCreditReadiness(transactions: TransactionData[]): CreditReadinessData {
   const completed = transactions.filter(t => t.status === 'COMPLETED');
   const now = new Date();
 
-  // 1. Consistency Score (max 25)
-  // Check how many of the past 8 weeks have at least one inflow
+  
+  
   let activeWeeks = 0;
   for (let w = 0; w < 8; w++) {
     const startOfBucket = new Date(now.getTime() - (w + 1) * 7 * 24 * 60 * 60 * 1000);
@@ -283,8 +265,8 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
   }
   const consistencyScore = (activeWeeks / 8) * 25;
 
-  // 2. Net Cashflow / Profitability Score (max 25)
-  // Compute net profit past 30 days
+  
+  
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   let inflow30 = 0;
   let outflow30 = 0;
@@ -308,8 +290,8 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
     profitScore = 10;
   }
 
-  // 3. Inflow/Outflow Ratio Score (max 20)
-  // Overall past 60 days
+  
+  
   const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
   let inflow60 = 0;
   let outflow60 = 0;
@@ -333,7 +315,7 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
     ratioScore = 10;
   }
 
-  // 4. Transaction History Duration Score (max 15)
+  
   let historyScore = 0;
   let durationDays = 0;
   if (completed.length >= 2) {
@@ -351,8 +333,8 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
     }
   }
 
-  // 5. Expense Volatility Score (max 15)
-  // Compare expenses of past 30 days with expenses of 30-60 days ago
+  
+  
   let outflowPrev60 = 0;
   for (const t of completed) {
     const tDate = new Date(t.date);
@@ -372,7 +354,7 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
     volatilityScore = 5;
   }
 
-  // Calculate final credit score (300 to 850 range)
+  
   const subScoreSum = consistencyScore + profitScore + ratioScore + historyScore + volatilityScore;
   const creditScore = Math.min(850, Math.max(300, 300 + Math.round(subScoreSum * 5.5)));
 
@@ -383,7 +365,7 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
     riskLevel = 'MEDIUM';
   }
 
-  // Structured feedbacks
+  
   const strengths: string[] = [];
   const weaknesses: string[] = [];
   const nextSteps: string[] = [];

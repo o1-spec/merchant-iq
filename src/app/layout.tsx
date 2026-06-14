@@ -1,22 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { ToastProvider } from "@/components/ui/toast";
 import "./globals.css";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { Header } from "@/components/layout/Header";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
-  title: "OPay Business OS | AI CFO",
-  description: "Intelligent financial products for SMEs",
+  title: "MerchantIQ | AI CFO for African SMEs",
+  description: "Turn transaction data into cashflow forecasts, growth recommendations, and credit readiness insights.",
 };
 
 export default function RootLayout({
@@ -27,16 +15,17 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
-      <body className="min-h-full flex bg-background text-foreground">
-        <Sidebar />
-        <div className="flex-1 flex flex-col md:ml-64 min-h-screen">
-          <Header />
-          <main className="flex-1 p-6 md:p-8">
-            {children}
-          </main>
-        </div>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet" />
+      </head>
+      <body className="min-h-full bg-background text-foreground font-sans">
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );
