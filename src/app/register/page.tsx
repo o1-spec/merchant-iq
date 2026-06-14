@@ -32,10 +32,10 @@ function Field({
         id={id} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder} autoComplete={autoComplete} disabled={disabled}
         className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-slate-900 bg-slate-50 focus:bg-white
-          placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500
+          placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary
           focus:border-transparent transition-all duration-200
           disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed
-          ${error ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:border-emerald-500'}`}
+          ${error ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:border-primary'}`}
       />
       {error && <p className="text-xs text-red-600 mt-0.5 font-medium">{error}</p>}
     </div>
@@ -55,10 +55,10 @@ function SelectField({
         <select
           id={id} value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled}
           className={`w-full appearance-none px-3.5 py-2.5 rounded-lg border text-sm bg-slate-50 focus:bg-white pr-9
-            focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+            focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
             transition-all duration-200 disabled:bg-slate-100 disabled:cursor-not-allowed
             ${!value ? 'text-slate-400' : 'text-slate-900'}
-            ${error ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:border-emerald-500'}`}
+            ${error ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:border-primary'}`}
         >
           {placeholder && <option value="">{placeholder}</option>}
           {options.map((o) => <option key={o} value={o}>{o}</option>)}
@@ -131,7 +131,7 @@ export default function RegisterPage() {
       {/* Left side brand brief section (40% width) */}
       <aside className="hidden lg:flex flex-col justify-between w-full lg:w-[42%] xl:w-[38%] shrink-0 bg-slate-950 border-r border-slate-900 px-12 py-12 relative overflow-hidden">
         {/* Decorative backdrop mesh */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(16,185,129,0.08)_0%,transparent_70%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(59,130,246,0.08)_0%,transparent_70%)]" />
         <div className="relative z-10 h-full flex flex-col justify-between">
           <AuthLeftPanel />
         </div>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
         {/* Mobile Header Logo */}
         <div className="lg:hidden w-full max-w-md mb-6 self-center">
           <Link href="/" className="inline-flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-emerald-600 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center shrink-0">
               <span className="text-white font-bold text-xs">M</span>
             </div>
             <span className="font-bold text-slate-900 text-base">MerchantIQ</span>
@@ -221,7 +221,7 @@ export default function RegisterPage() {
           <div className="h-px bg-slate-100" />
           <p className="text-sm text-slate-600 text-center">
             Already have an account?{' '}
-            <Link href="/login" className="text-emerald-600 font-bold hover:underline transition-colors">
+            <Link href="/login" className="text-blue-600 font-bold hover:underline transition-colors">
               Sign in
             </Link>
           </p>

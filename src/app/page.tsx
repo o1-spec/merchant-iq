@@ -491,7 +491,7 @@ export default function LandingPage() {
         <section className="relative py-24 bg-white border-t border-slate-100">
           <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
 
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 mb-6 text-emerald-600 shadow-sm">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 mb-6 text-blue-600 shadow-sm">
               <ShoppingBag className="w-7 h-7" />
             </div>
 
@@ -505,7 +505,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-sm hover:shadow-md text-base"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-sm hover:shadow-md text-base"
               >
                 Try Demo
                 <ArrowRight className="w-5 h-5" />
