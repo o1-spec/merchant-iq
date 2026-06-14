@@ -3,13 +3,12 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/response';
 import { loanApplicationSchema } from '@/lib/validation';
-import { calculateCreditReadiness, TransactionData } from '@/lib/analytics';
+import { calculateBusinessHealth, TransactionData } from '@/lib/analytics';
 
-const LENDERS = [
-  { id: 'lender-renmoney', name: 'Renmoney Business Loans', minScore: 650, maxLoanMultiplier: 1.5 },
-  { id: 'lender-fairmoney', name: 'FairMoney SME Retailer Credit', minScore: 550, maxLoanMultiplier: 0.8 },
-  { id: 'lender-carbon', name: 'Carbon Capital Growth Loan', minScore: 600, maxLoanMultiplier: 1.2 },
-  { id: 'lender-rensource', name: 'RenSource Asset & Equipment Finance', minScore: 700, maxLoanMultiplier: 2.5 },
+const SCENARIOS = [
+  { id: 'tier-conservative', name: 'Scenario A: Conservative Capacity', minScore: 50, maxLoanMultiplier: 0.8 },
+  { id: 'tier-growth', name: 'Scenario B: Growth Capacity', minScore: 65, maxLoanMultiplier: 1.5 },
+  { id: 'tier-expansion', name: 'Scenario C: Expansion Capacity', minScore: 80, maxLoanMultiplier: 2.5 },
 ];
 
 export async function POST(req: NextRequest) {
@@ -27,9 +26,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { lenderId, requestedAmount } = result.data;
-    const lender = LENDERS.find(l => l.id === lenderId);
-    if (!lender) {
-      return errorResponse('Lender not found', 404);
+    const scenario = SCENARIOS.find(l => l.id === lenderId);
+    if (!scenario) {
+      return errorResponse('Funding scenario not found', 404);
     }
 
     // Fetch transactions to compute credit status
@@ -37,7 +36,7 @@ export async function POST(req: NextRequest) {
       where: { merchantId },
     });
     const txData = transactions as unknown as TransactionData[];
-    const creditReadiness = calculateCreditReadiness(txData);
+    const businessHealth = calculateBusinessHealth(txData);
 
     // Compute monthly revenue
     const now = new Date();
@@ -55,31 +54,31 @@ export async function POST(req: NextRequest) {
       revenue30 = 100000; // base default
     }
 
-    const maxAmount = revenue30 * lender.maxLoanMultiplier;
+    const maxAmount = revenue30 * scenario.maxLoanMultiplier;
 
-    // Decision Engine
+    // Decision Engine (0-100 scale)
     let status = 'PENDING';
     let rejectionReason = '';
 
-    if (creditReadiness.score < lender.minScore) {
+    if (businessHealth.score < scenario.minScore) {
       status = 'REJECTED';
-      rejectionReason = `Credit score (${creditReadiness.score}) is below the lender's minimum requirement of ${lender.minScore}.`;
+      rejectionReason = `Business Health score (${businessHealth.score}) is below the minimum required score of ${scenario.minScore} for this tier.`;
     } else if (requestedAmount > maxAmount * 1.1) {
       status = 'REJECTED';
-      rejectionReason = `Requested amount exceeds the maximum qualified limit for this lender (Limit: ₦${Math.round(maxAmount).toLocaleString()}).`;
-    } else if (creditReadiness.score >= 700) {
+      rejectionReason = `Requested amount exceeds the maximum qualified capacity for this scenario (Capacity: ₦${Math.round(maxAmount).toLocaleString()}).`;
+    } else if (businessHealth.score >= 80) {
       status = 'APPROVED';
     } else {
-      status = 'PENDING'; // Needs manual review
+      status = 'PENDING'; // Needs review
     }
 
     const packagedProfile = {
-      creditScore: creditReadiness.score,
-      riskRating: creditReadiness.riskLevel,
+      creditScore: businessHealth.score,
+      riskRating: businessHealth.riskLevel,
       monthlyRevenueEst: Math.round(revenue30),
       qualifiedMaxAmount: Math.round(maxAmount),
-      strengths: creditReadiness.strengths,
-      weaknesses: creditReadiness.weaknesses,
+      strengths: businessHealth.strengths,
+      weaknesses: businessHealth.weaknesses,
       rejectionReason: rejectionReason || undefined,
     };
 
@@ -87,7 +86,7 @@ export async function POST(req: NextRequest) {
       data: {
         merchantId,
         lenderId,
-        lenderName: lender.name,
+        lenderName: scenario.name,
         requestedAmount,
         status,
         packagedProfile: JSON.stringify(packagedProfile),

@@ -2,7 +2,7 @@ import { prisma } from './prisma';
 import {
   calculateSummary,
   calculateCashflow,
-  calculateCreditReadiness,
+  calculateBusinessHealth,
   TransactionData
 } from './analytics';
 import { generateGeminiText } from './gemini';
@@ -105,7 +105,7 @@ async function main() {
   
   const summary = calculateSummary(mockTransactions);
   const cashflow = calculateCashflow(mockTransactions);
-  const creditReadiness = calculateCreditReadiness(mockTransactions);
+  const businessHealth = calculateBusinessHealth(mockTransactions);
 
   
   console.log('Compiling Morning Brief prompt...');
@@ -113,7 +113,7 @@ async function main() {
     merchant: mockMerchant,
     summary,
     cashflow,
-    creditReadiness
+    businessHealth
   });
   console.log(`Morning brief prompt length: ${briefPrompt.length}`);
 
@@ -129,7 +129,7 @@ async function main() {
   console.log('Compiling Credit Coach prompt...');
   const coachPrompt = buildCreditCoachPrompt({
     merchant: mockMerchant,
-    creditReadiness,
+    businessHealth,
     summary,
     cashflow
   });
@@ -141,7 +141,7 @@ async function main() {
     question: 'How can I optimize cashflow?',
     summary,
     cashflow,
-    creditReadiness,
+    businessHealth,
     recentTransactions: mockTransactions
   });
   console.log(`Ask CFO prompt length: ${askPrompt.length}`);

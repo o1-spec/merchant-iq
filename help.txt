@@ -1,0 +1,333 @@
+Create a high-fidelity clickable web application prototype called MerchantIQ.
+
+MerchantIQ is an AI-powered Financial Intelligence and Business Health platform for African SMEs, traders, POS agents, restaurants, pharmacies, wholesalers, and small retail businesses.
+
+The platform transforms transaction history into business insights, funding readiness assessments, and a verified financial identity that can be shared with lenders.
+
+DESIGN PRINCIPLES
+
+Do NOT make this look like a generic AI product.
+
+Do NOT use glowing AI gradients, futuristic effects, floating holograms, or sci-fi designs.
+
+Design should feel like:
+
+- Stripe Dashboard
+- Mercury Banking
+- Monzo Business
+- Linear
+- Notion
+
+Keywords:
+Professional
+Trustworthy
+Financial
+Operational
+Executive
+Minimal
+Premium
+
+Color palette:
+- White backgrounds
+- Soft grays
+- Dark navy accents
+- Emerald success states
+- Amber warning states
+- Minimal use of purple
+
+Typography:
+- Inter
+- Geist
+- Plus Jakarta Sans
+
+The product should feel like software used to run a business, not an AI experiment.
+
+------------------------------------------------
+
+USER PERSONA
+
+Name: Femi
+
+Business:
+Neighborhood provision store
+
+Location:
+Ikeja, Lagos
+
+Problem:
+Uses OPay and bank transfers daily.
+Has transaction history but no visibility into cashflow, business health, or funding readiness.
+
+Goal:
+Understand business performance.
+Avoid cash shortages.
+Improve access to capital.
+
+------------------------------------------------
+
+SCREEN 1 — LANDING PAGE
+
+Headline:
+
+Your Financial Operating System
+
+Subheadline:
+
+Transform transaction history into business intelligence, funding readiness insights, and a verified financial identity.
+
+Primary CTA:
+Start Free Analysis
+
+Secondary CTA:
+View Demo
+
+Sections:
+
+- Problem statement
+- How it works
+- Business Health Score
+- Funding Readiness
+- Trust Passport
+- Testimonials
+- Footer
+
+------------------------------------------------
+
+SCREEN 2 — REGISTER
+
+Fields:
+
+Full Name
+Email
+Password
+Business Name
+Business Type
+Business Category
+Location
+
+CTA:
+
+Create Account
+
+Include trust messaging:
+
+No accounting knowledge required.
+Works with OPay, Moniepoint, GTBank, Access Bank, Kuda and others.
+
+------------------------------------------------
+
+SCREEN 3 — ONBOARDING FLOW
+
+Step 1:
+Welcome
+
+Step 2:
+What type of business do you run?
+
+Step 3:
+How do you receive payments?
+
+Options:
+
+OPay
+Moniepoint
+Bank Transfer
+POS
+Cash
+
+Step 4:
+Upload statement
+
+Progress indicator throughout.
+
+------------------------------------------------
+
+SCREEN 4 — TRANSACTION UPLOAD
+
+Large drag-and-drop upload area.
+
+Supported:
+
+CSV
+Excel
+Bank Statements
+
+Show:
+
+Recent uploads
+Supported institutions
+
+Examples:
+
+OPay
+Moniepoint
+GTBank
+Access Bank
+Kuda
+UBA
+Zenith
+
+CTA:
+
+Analyze Transactions
+
+------------------------------------------------
+
+SCREEN 5 — ANALYSIS PROCESS
+
+Display:
+
+Parsing Statement
+Categorizing Transactions
+Calculating Business Health
+Generating Funding Readiness
+Creating Trust Passport
+
+Professional loading experience.
+
+No fake AI animations.
+
+------------------------------------------------
+
+SCREEN 6 — DASHBOARD
+
+Top metrics:
+
+Business Health Score
+Cash Runway
+Monthly Revenue
+Funding Readiness
+
+Additional sections:
+
+Revenue Trends
+Expense Trends
+Top Categories
+Cashflow Summary
+Business Recommendations
+
+Sample Data:
+
+Business Health:
+78/100
+
+Monthly Revenue:
+₦2,450,000
+
+Cash Runway:
+42 Days
+
+Funding Readiness:
+Strong
+
+------------------------------------------------
+
+SCREEN 7 — AI CFO
+
+Conversation interface.
+
+Examples:
+
+"Can I afford new inventory?"
+
+"Why is my business health score low?"
+
+"What should I improve before applying for funding?"
+
+Responses should be practical and based on actual business data.
+
+------------------------------------------------
+
+SCREEN 8 — CAPITAL READINESS
+
+Title:
+
+Capital Readiness Center
+
+Metrics:
+
+Business Health Score
+Funding Readiness
+Monthly Revenue Run Rate
+Estimated Funding Capacity
+
+Section:
+
+Why Your Funding Capacity Is Limited
+
+Section:
+
+Business Health Breakdown
+
+- Consistency
+- Cashflow
+- Stability
+- Growth
+- Trust
+
+Section:
+
+Business Health History Trend
+
+Line chart showing monthly improvement.
+
+Section:
+
+Funding Capacity Scenarios
+
+Scenario A:
+Conservative Capacity
+
+Scenario B:
+Growth Capacity
+
+Scenario C:
+Expansion Capacity
+
+------------------------------------------------
+
+SCREEN 9 — TRUST PASSPORT
+
+Title:
+
+Verified Merchant Financial Identity
+
+Display:
+
+Business Name
+Business Category
+Years Active
+Business Health Score
+Funding Readiness
+Verification Status
+
+Show a premium printable certificate-style layout suitable for sharing with lenders.
+
+------------------------------------------------
+
+SCREEN 10 — REPORTS
+
+Monthly performance report.
+
+Sections:
+
+Business Health Trends
+Cashflow Analysis
+Funding Readiness Analysis
+Key Recommendations
+
+Allow export to PDF.
+
+------------------------------------------------
+
+PROTOTYPE REQUIREMENTS
+
+Create clickable navigation between all screens.
+
+Use realistic Nigerian business examples.
+
+Use realistic naira values.
+
+Maintain consistency across all pages.
+
+The prototype should feel like a venture-backed fintech SaaS product ready for pilot deployment.

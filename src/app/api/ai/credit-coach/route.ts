@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/response';
-import { calculateSummary, calculateCashflow, calculateCreditReadiness, TransactionData } from '@/lib/analytics';
+import { calculateSummary, calculateCashflow, calculateBusinessHealth, TransactionData } from '@/lib/analytics';
 import { generateGeminiText } from '@/lib/gemini';
 import { buildCreditCoachPrompt } from '@/lib/ai-prompts';
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const txData = transactions as unknown as TransactionData[];
     const summary = calculateSummary(txData);
     const cashflow = calculateCashflow(txData);
-    const creditReadiness = calculateCreditReadiness(txData);
+    const businessHealth = calculateBusinessHealth(txData);
 
     let forceRegenerate = false;
     try {
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     
     const prompt = buildCreditCoachPrompt({
       merchant,
-      creditReadiness,
+      businessHealth,
       summary,
       cashflow,
     });

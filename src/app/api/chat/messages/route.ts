@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/response';
-import { calculateSummary, calculateCashflow, calculateCreditReadiness, TransactionData } from '@/lib/analytics';
+import { calculateSummary, calculateCashflow, calculateBusinessHealth, TransactionData } from '@/lib/analytics';
 import { z } from 'zod';
 
 export const runtime = 'nodejs';
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     const txData = transactions as unknown as TransactionData[];
     const summary = calculateSummary(txData);
     const cashflow = calculateCashflow(txData);
-    const creditReadiness = calculateCreditReadiness(txData);
+    const businessHealth = calculateBusinessHealth(txData);
     const recentTransactions = txData.slice(0, 20);
 
     const financialContext = `You are MerchantIQ, the AI CFO for ${merchant.businessName}, a ${merchant.businessType} business in ${merchant.location || 'Lagos, Nigeria'}.
@@ -97,8 +97,8 @@ Cash Flow Details:
 - Average Daily Outflow: ₦${cashflow.averageDailyOutflow.toLocaleString()}
 - Runway: ${cashflow.runwayDays} days (Risk: ${cashflow.riskLevel})
 
-Credit Status:
-- Score: ${creditReadiness.score}/850 (Risk level: ${creditReadiness.riskLevel})
+Business Health Status:
+- Score: ${businessHealth.score}/100 (Risk level: ${businessHealth.riskLevel})
 
 Recent Transactions:
 ${recentTransactions.map(t => `- Date: ${new Date(t.date).toLocaleDateString()}, Category: ${t.category}, Amount: ₦${t.amount.toLocaleString()}, Type: ${t.type}, Direction: ${t.direction}, Method: ${t.paymentMethod}, Status: ${t.status}`).join('\n')}

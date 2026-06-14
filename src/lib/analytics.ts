@@ -36,12 +36,27 @@ export interface CashflowData {
   warning: string;
 }
 
-export interface CreditReadinessData {
+export interface BusinessHealthData {
   score: number;
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
   strengths: string[];
   weaknesses: string[];
   nextSteps: string[];
+  breakdown: {
+    consistency: number;
+    cashflow: number;
+    stability: number;
+    growth: number;
+    credit: number;
+  };
+}
+
+export interface ForecastData {
+  forecastedMonthlyInflow: number;
+  forecastedMonthlyOutflow: number;
+  netForecastedPosition: number;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  warning: string;
 }
 
 export function calculateTrendPercent(currentPeriod: number, previousPeriod: number): number {
@@ -182,7 +197,7 @@ export function calculateSummary(transactions: TransactionData[]): SummaryData {
   };
 }
 
-export function calculateCashflow(transactions: TransactionData[]): CashflowData {
+export function calculateCashflow(transactions: TransactionData[], referenceDate: Date = new Date()): CashflowData {
   const completed = transactions.filter(t => t.status === 'COMPLETED');
 
   let totalInflow = 0;
@@ -197,7 +212,7 @@ export function calculateCashflow(transactions: TransactionData[]): CashflowData
   const currentCash = totalInflow - totalOutflow;
 
   
-  const now = new Date();
+  const now = referenceDate;
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   let inflowPast30 = 0;
@@ -247,12 +262,11 @@ export function calculateCashflow(transactions: TransactionData[]): CashflowData
   };
 }
 
-export function calculateCreditReadiness(transactions: TransactionData[]): CreditReadinessData {
+export function calculateBusinessHealth(transactions: TransactionData[], referenceDate: Date = new Date()): BusinessHealthData {
   const completed = transactions.filter(t => t.status === 'COMPLETED');
-  const now = new Date();
+  const now = referenceDate;
 
-  
-  
+  // 1. Consistency (20 points max)
   let activeWeeks = 0;
   for (let w = 0; w < 8; w++) {
     const startOfBucket = new Date(now.getTime() - (w + 1) * 7 * 24 * 60 * 60 * 1000);
@@ -263,36 +277,55 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
     });
     if (hasInflow) activeWeeks += 1;
   }
-  const consistencyScore = (activeWeeks / 8) * 25;
+  const consistencyScore = Math.round((activeWeeks / 8) * 20);
 
-  
-  
+  // 2. Cashflow / Runway (30 points max)
+  const cashflow = calculateCashflow(transactions, referenceDate);
+  const runwayDays = cashflow.runwayDays;
+  let runwayScore = 0;
+  if (runwayDays >= 30) runwayScore = 30;
+  else if (runwayDays >= 14) runwayScore = 20;
+  else if (runwayDays >= 7) runwayScore = 10;
+  else runwayScore = 0;
+
+  // 3. Stability (15 points max)
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  let inflow30 = 0;
+  const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
   let outflow30 = 0;
+  let outflowPrev60 = 0;
   for (const t of completed) {
     const tDate = new Date(t.date);
     if (tDate >= thirtyDaysAgo) {
-      if (t.direction === 'INFLOW') {
-        inflow30 += t.amount;
-      } else {
-        outflow30 += t.amount;
-      }
+      if (t.direction === 'OUTFLOW') outflow30 += t.amount;
+    } else if (tDate >= sixtyDaysAgo && tDate < thirtyDaysAgo) {
+      if (t.direction === 'OUTFLOW') outflowPrev60 += t.amount;
     }
   }
-  const netProfitPast30 = inflow30 - outflow30;
-  let profitScore = 0;
-  if (netProfitPast30 > 200000) {
-    profitScore = 25;
-  } else if (netProfitPast30 > 50000) {
-    profitScore = 15;
-  } else if (netProfitPast30 > 0) {
-    profitScore = 10;
-  }
+  const volatilityRatio = outflowPrev60 > 0 ? Math.abs(outflow30 - outflowPrev60) / outflowPrev60 : 0;
+  let stabilityScore = 0;
+  if (volatilityRatio < 0.2) stabilityScore = 15;
+  else if (volatilityRatio < 0.5) stabilityScore = 10;
+  else if (volatilityRatio < 1.0) stabilityScore = 5;
 
-  
-  
-  const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+  // 4. Growth (15 points max)
+  let inflow30 = 0;
+  let inflowPrev60 = 0;
+  for (const t of completed) {
+    const tDate = new Date(t.date);
+    if (tDate >= thirtyDaysAgo) {
+      if (t.direction === 'INFLOW') inflow30 += t.amount;
+    } else if (tDate >= sixtyDaysAgo && tDate < thirtyDaysAgo) {
+      if (t.direction === 'INFLOW') inflowPrev60 += t.amount;
+    }
+  }
+  const revGrowth = calculateTrendPercent(inflow30, inflowPrev60);
+  let growthScore = 0;
+  if (revGrowth >= 15) growthScore = 15;
+  else if (revGrowth >= 5) growthScore = 10;
+  else if (revGrowth >= 0) growthScore = 5;
+
+  // 5. Credit Readiness (20 points max)
   let inflow60 = 0;
   let outflow60 = 0;
   for (const t of completed) {
@@ -306,105 +339,64 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
     }
   }
   const ratio = outflow60 > 0 ? inflow60 / outflow60 : inflow60 > 0 ? 2 : 1;
-  let ratioScore = 0;
-  if (ratio >= 1.2) {
-    ratioScore = 20;
-  } else if (ratio >= 1.05) {
-    ratioScore = 15;
-  } else if (ratio >= 1.0) {
-    ratioScore = 10;
-  }
+  let creditScorePart = 0;
+  if (ratio >= 1.2) creditScorePart = 20;
+  else if (ratio >= 1.05) creditScorePart = 15;
+  else if (ratio >= 1.0) creditScorePart = 10;
 
-  
-  let historyScore = 0;
-  let durationDays = 0;
-  if (completed.length >= 2) {
-    const dates = completed.map(t => new Date(t.date).getTime());
-    const minDate = Math.min(...dates);
-    const maxDate = Math.max(...dates);
-    durationDays = Math.round((maxDate - minDate) / (1000 * 60 * 60 * 24));
-
-    if (durationDays >= 60) {
-      historyScore = 15;
-    } else if (durationDays >= 30) {
-      historyScore = 10;
-    } else if (durationDays >= 14) {
-      historyScore = 5;
-    }
-  }
-
-  
-  
-  let outflowPrev60 = 0;
-  for (const t of completed) {
-    const tDate = new Date(t.date);
-    if (tDate >= sixtyDaysAgo && tDate < thirtyDaysAgo) {
-      if (t.direction === 'OUTFLOW') {
-        outflowPrev60 += t.amount;
-      }
-    }
-  }
-  const volatilityRatio = outflowPrev60 > 0 ? Math.abs(outflow30 - outflowPrev60) / outflowPrev60 : 0;
-  let volatilityScore = 0;
-  if (volatilityRatio < 0.2) {
-    volatilityScore = 15;
-  } else if (volatilityRatio < 0.5) {
-    volatilityScore = 10;
-  } else if (volatilityRatio < 1.0) {
-    volatilityScore = 5;
-  }
-
-  
-  const subScoreSum = consistencyScore + profitScore + ratioScore + historyScore + volatilityScore;
-  const creditScore = Math.min(850, Math.max(300, 300 + Math.round(subScoreSum * 5.5)));
+  const finalScore = consistencyScore + runwayScore + stabilityScore + growthScore + creditScorePart;
 
   let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' = 'HIGH';
-  if (creditScore >= 700) {
+  if (finalScore >= 80) {
     riskLevel = 'LOW';
-  } else if (creditScore >= 550) {
+  } else if (finalScore >= 50) {
     riskLevel = 'MEDIUM';
   }
 
-  
   const strengths: string[] = [];
   const weaknesses: string[] = [];
   const nextSteps: string[] = [];
 
+  // Consistency Feedback
   if (activeWeeks >= 6) {
-    strengths.push('Consistent weekly transaction history logged.');
+    strengths.push('Highly consistent week-over-week transaction activity logged.');
   } else {
-    weaknesses.push('Inconsistent week-over-week sales logging.');
-    nextSteps.push('Log transactions daily to establish a steady, active weekly profile.');
+    weaknesses.push('Inconsistent weekly sales activity.');
+    nextSteps.push('Log sales transactions consistently each week to stabilize your business profile.');
   }
 
-  if (netProfitPast30 > 100000) {
-    strengths.push('Strong monthly net profitability margins.');
-  } else if (netProfitPast30 <= 0) {
-    weaknesses.push('Net loss or negative cash flow balance over the last 30 days.');
-    nextSteps.push('Implement operational cost cutting or optimize pricing to return to net profit.');
+  // Cashflow/Runway Feedback
+  if (runwayDays >= 30) {
+    strengths.push('Healthy cash runway (30+ days of reserves).');
+  } else if (runwayDays < 14) {
+    weaknesses.push('Short cash runway reserves (less than 14 days).');
+    nextSteps.push('Delay large stock orders or non-essential cash payouts to protect runway.');
   } else {
-    strengths.push('Maintained positive net cash flow.');
+    strengths.push('Stable cash runway profile.');
   }
 
-  if (ratio >= 1.15) {
-    strengths.push('Revenue inflows comfortably exceed cash outflows.');
-  } else if (ratio < 1.0) {
-    weaknesses.push('Expense outflows exceed inbound revenue.');
-    nextSteps.push('Track cash allocation to ensure outflows do not outpace revenue.');
-  }
-
-  if (durationDays >= 45) {
-    strengths.push('Established business activity history (45+ days).');
-  } else {
-    weaknesses.push('Limited transaction record history length.');
-    nextSteps.push('Keep utilizing MerchantIQ for regular accounting to build credit history duration.');
-  }
-
+  // Stability Feedback
   if (volatilityRatio < 0.3) {
-    strengths.push('Stable expense run-rate month-over-month.');
-  } else if (volatilityRatio > 0.8) {
-    weaknesses.push('High volatility in monthly business expenses.');
-    nextSteps.push('Plan bulk purchases or utility payments to stabilize monthly cash outflows.');
+    strengths.push('Stable operating expense run-rate month-over-month.');
+  } else if (volatilityRatio > 0.7) {
+    weaknesses.push('Highly volatile month-over-month cash outflows.');
+    nextSteps.push('Stabilize weekly spending; schedule recurring payments to reduce volatility.');
+  }
+
+  // Growth Feedback
+  if (revGrowth > 5) {
+    strengths.push('Positive inbound revenue growth rate.');
+  } else if (revGrowth <= 0) {
+    weaknesses.push('Declining or flat revenue trends.');
+    nextSteps.push('Review low-performing sales days and offer client discounts or promotions.');
+  }
+
+  // Credit Readiness Feedback
+  if (ratio >= 1.1) {
+    strengths.push('Transaction inflows comfortably cover all debt and outflow commitments.');
+  } else if (ratio < 1.0) {
+    weaknesses.push('Expenses outpace revenues over the past 60 days.');
+    nextSteps.push('Audit supplier costs and cut operational spending to return to positive net balance.');
   }
 
   if (nextSteps.length === 0) {
@@ -412,10 +404,72 @@ export function calculateCreditReadiness(transactions: TransactionData[]): Credi
   }
 
   return {
-    score: creditScore,
+    score: finalScore,
     riskLevel,
     strengths,
     weaknesses,
     nextSteps,
+    breakdown: {
+      consistency: consistencyScore,
+      cashflow: runwayScore,
+      stability: stabilityScore,
+      growth: growthScore,
+      credit: creditScorePart
+    }
+  };
+}
+
+export function calculateForecast(transactions: TransactionData[]): ForecastData {
+  const completed = transactions.filter(t => t.status === 'COMPLETED');
+  const now = new Date();
+  
+  // Calculate average weekly inflows/outflows over past 8 weeks
+  const eightWeeksAgo = new Date(now.getTime() - 56 * 24 * 60 * 60 * 1000);
+  const relevantTx = completed.filter(t => new Date(t.date) >= eightWeeksAgo);
+  
+  let totalInflow = 0;
+  let totalOutflow = 0;
+  for (const t of relevantTx) {
+    if (t.direction === 'INFLOW') {
+      totalInflow += t.amount;
+    } else {
+      totalOutflow += t.amount;
+    }
+  }
+  
+  // Find span of days in relevant transactions to scale correctly
+  let daysSpan = 56;
+  if (relevantTx.length >= 2) {
+    const dates = relevantTx.map(t => new Date(t.date).getTime());
+    const minDate = Math.min(...dates);
+    const maxDate = Math.max(...dates);
+    const diffDays = Math.round((maxDate - minDate) / (1000 * 60 * 60 * 24));
+    if (diffDays > 5) daysSpan = Math.min(56, diffDays);
+  }
+  
+  const dailyInflow = totalInflow / Math.max(1, daysSpan);
+  const dailyOutflow = totalOutflow / Math.max(1, daysSpan);
+  
+  const forecastedMonthlyInflow = Math.round(dailyInflow * 30);
+  const forecastedMonthlyOutflow = Math.round(dailyOutflow * 30);
+  const netForecastedPosition = forecastedMonthlyInflow - forecastedMonthlyOutflow;
+  
+  let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' = 'LOW';
+  let warning = 'Stable projected cash forecast. Expected inflows will cover monthly operations.';
+  
+  if (netForecastedPosition < 0) {
+    riskLevel = 'HIGH';
+    warning = 'Forecasted monthly outflows exceed expected inflows. Consider reducing overhead or auditing vendor rates.';
+  } else if (forecastedMonthlyInflow > 0 && (netForecastedPosition / forecastedMonthlyInflow) < 0.1) {
+    riskLevel = 'MEDIUM';
+    warning = 'Tight cash forecast. Projected inflows barely cover monthly expenses.';
+  }
+  
+  return {
+    forecastedMonthlyInflow,
+    forecastedMonthlyOutflow,
+    netForecastedPosition,
+    riskLevel,
+    warning,
   };
 }

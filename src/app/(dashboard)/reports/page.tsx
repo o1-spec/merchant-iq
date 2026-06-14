@@ -173,7 +173,15 @@ export default function ReportsPage() {
     );
   }
 
-  const scorePercent = Math.min(100, Math.max(0, ((report.creditReadiness.score - 300) / 550) * 100));
+  const creditReadiness = report.creditReadiness ?? {
+    score: 300,
+    riskLevel: 'HIGH',
+    strengths: [],
+    weaknesses: [],
+    nextSteps: []
+  };
+
+  const scorePercent = Math.min(100, Math.max(0, ((creditReadiness.score - 300) / 550) * 100));
 
   return (
     <div className="space-y-6 max-w-[1200px] print-full">
@@ -366,23 +374,23 @@ export default function ReportsPage() {
           <div className="bg-white border border-card-border rounded-2xl p-6 space-y-5 transition-all duration-300">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-slate-905 text-sm uppercase tracking-wider">Credit Readiness</h3>
-              <span className={`text-[10px] font-bold border px-2.5 py-0.5 rounded-full uppercase tracking-wider ${riskBadges[report.creditReadiness.riskLevel]}`}>
-                {report.creditReadiness.riskLevel} Risk
+              <span className={`text-[10px] font-bold border px-2.5 py-0.5 rounded-full uppercase tracking-wider ${riskBadges[creditReadiness.riskLevel]}`}>
+                {creditReadiness.riskLevel} Risk
               </span>
             </div>
 
             <div className="space-y-3">
               <div className="flex justify-between items-baseline">
                 <span className="text-xs text-slate-500 font-bold uppercase tracking-wider text-[10px]">Credit Score</span>
-                <span className="text-2xl font-black text-slate-900 tabular-nums">{report.creditReadiness.score}</span>
+                <span className="text-2xl font-black text-slate-900 tabular-nums">{creditReadiness.score}</span>
               </div>
               
               <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
                 <div 
                   className={`h-full transition-all duration-1000 ${
-                    report.creditReadiness.riskLevel === 'LOW' 
+                    creditReadiness.riskLevel === 'LOW' 
                       ? 'bg-primary' 
-                      : report.creditReadiness.riskLevel === 'MEDIUM' 
+                      : creditReadiness.riskLevel === 'MEDIUM' 
                         ? 'bg-amber-500' 
                         : 'bg-red-600'
                   }`}
@@ -403,11 +411,11 @@ export default function ReportsPage() {
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                   Key Strengths
                 </p>
-                {report.creditReadiness.strengths.length === 0 ? (
+                {creditReadiness.strengths.length === 0 ? (
                   <p className="text-slate-400 italic">No specific strengths detected yet.</p>
                 ) : (
                   <ul className="space-y-1.5 text-slate-600 pl-5 list-disc leading-relaxed">
-                    {report.creditReadiness.strengths.map((str, i) => (
+                    {creditReadiness.strengths.map((str, i) => (
                       <li key={i}>{str}</li>
                     ))}
                   </ul>
@@ -419,11 +427,11 @@ export default function ReportsPage() {
                   <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
                   Areas to Improve
                 </p>
-                {report.creditReadiness.weaknesses.length === 0 ? (
+                {creditReadiness.weaknesses.length === 0 ? (
                   <p className="text-slate-400 italic">No specific weaknesses detected.</p>
                 ) : (
                   <ul className="space-y-1.5 text-slate-600 pl-5 list-disc leading-relaxed">
-                    {report.creditReadiness.weaknesses.map((w, i) => (
+                    {creditReadiness.weaknesses.map((w, i) => (
                       <li key={i}>{w}</li>
                     ))}
                   </ul>
@@ -431,14 +439,14 @@ export default function ReportsPage() {
               </div>
             </div>
 
-            {report.creditReadiness.nextSteps && report.creditReadiness.nextSteps.length > 0 && (
+            {creditReadiness.nextSteps && creditReadiness.nextSteps.length > 0 && (
               <div className="border-t border-slate-100 pt-4 space-y-2 text-xs font-semibold">
                 <p className="font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
                   <ListTodo className="w-4 h-4 text-purple-600 shrink-0" />
                   Recommended Next Steps
                 </p>
                 <ul className="space-y-1.5 text-slate-600 pl-5 list-decimal leading-relaxed">
-                  {report.creditReadiness.nextSteps.map((step, i) => (
+                  {creditReadiness.nextSteps.map((step, i) => (
                     <li key={i}>{step}</li>
                   ))}
                 </ul>

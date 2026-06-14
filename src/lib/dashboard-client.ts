@@ -31,11 +31,27 @@ export interface CashflowData {
   warning: string;
 }
 
-export interface CreditReadinessData {
+export interface BusinessHealthData {
   score: number;
-  riskLevel: string;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
   strengths: string[];
   weaknesses: string[];
+  nextSteps: string[];
+  breakdown: {
+    consistency: number;
+    cashflow: number;
+    stability: number;
+    growth: number;
+    credit: number;
+  };
+}
+
+export interface ForecastData {
+  forecastedMonthlyInflow: number;
+  forecastedMonthlyOutflow: number;
+  netForecastedPosition: number;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  warning: string;
 }
 
 export interface Transaction {
@@ -64,7 +80,8 @@ export interface DashboardData {
   merchant: MerchantInfo;
   summary: SummaryData;
   cashflow: CashflowData;
-  creditReadiness: CreditReadinessData;
+  businessHealth: BusinessHealthData;
+  forecast: ForecastData;
   recentTransactions: Transaction[];
   latestInsights: Insight[];
 }

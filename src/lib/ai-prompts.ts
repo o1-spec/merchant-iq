@@ -1,4 +1,4 @@
-import { SummaryData, CashflowData, CreditReadinessData, TransactionData } from './analytics';
+import { SummaryData, CashflowData, BusinessHealthData, TransactionData } from './analytics';
 
 export interface MerchantInfo {
   businessName: string;
@@ -11,12 +11,12 @@ export function buildMorningBriefPrompt({
   merchant,
   summary,
   cashflow,
-  creditReadiness,
+  businessHealth,
 }: {
   merchant: MerchantInfo;
   summary: SummaryData;
   cashflow: CashflowData;
-  creditReadiness: CreditReadinessData;
+  businessHealth: BusinessHealthData;
 }) {
   return `You are a helpful and experienced AI CFO named MerchantIQ, coaching a Nigerian small business owner.
 Merchant Details:
@@ -44,9 +44,9 @@ Cash Flow Insights:
 - Runway: ${cashflow.runwayDays} days
 - Runway Risk Level: ${cashflow.riskLevel}
 
-Credit Profile:
-- Credit Score: ${creditReadiness.score} / 850
-- Credit Risk Rating: ${creditReadiness.riskLevel}
+Business Health Profile:
+- Business Health Score: ${businessHealth.score} / 100
+- Business Health Risk Rating: ${businessHealth.riskLevel}
 
 TASK:
 Write a morning briefing for this business owner.
@@ -111,12 +111,12 @@ RULES:
 
 export function buildCreditCoachPrompt({
   merchant,
-  creditReadiness,
+  businessHealth,
   summary,
   cashflow,
 }: {
   merchant: MerchantInfo;
-  creditReadiness: CreditReadinessData;
+  businessHealth: BusinessHealthData;
   summary: SummaryData;
   cashflow: CashflowData;
 }) {
@@ -125,11 +125,11 @@ Merchant Details:
 - Business Name: ${merchant.businessName}
 - Type: ${merchant.businessType}
 
-Current Credit Profile (Calculated Deterministically):
-- Credit Score: ${creditReadiness.score} / 850 (Risk level: ${creditReadiness.riskLevel})
-- Key Strengths: ${creditReadiness.strengths.join(', ')}
-- Key Weaknesses: ${creditReadiness.weaknesses.join(', ')}
-- Recommended Improvement Steps: ${creditReadiness.nextSteps.join(', ')}
+Current Business Health & Credit Readiness Profile (Calculated Deterministically):
+- Business Health Score: ${businessHealth.score} / 100 (Risk level: ${businessHealth.riskLevel})
+- Key Strengths: ${businessHealth.strengths.join(', ')}
+- Key Weaknesses: ${businessHealth.weaknesses.join(', ')}
+- Recommended Improvement Steps: ${businessHealth.nextSteps.join(', ')}
 
 Financial Context:
 - Cash Position: ₦${cashflow.currentCash.toLocaleString()}
@@ -139,7 +139,7 @@ Financial Context:
 TASK:
 Write an easy-to-understand credit coaching brief for the owner.
 Format it using these headers:
-1. **What Your Score Means**: Explain the score of ${creditReadiness.score} and risk rating of ${creditReadiness.riskLevel} in simple terms.
+1. **What Your Score Means**: Explain the health score of ${businessHealth.score} and risk rating of ${businessHealth.riskLevel} in simple terms.
 2. **Your Strengths & Weaknesses**: Briefly summarize what they are doing well and what needs attention.
 3. **CFO Action Plan**: 3 concrete, simple steps they should consider taking to raise their score.
 RULES:
@@ -157,14 +157,14 @@ export function buildAskCfoPrompt({
   question,
   summary,
   cashflow,
-  creditReadiness,
+  businessHealth,
   recentTransactions,
 }: {
   merchant: MerchantInfo;
   question: string;
   summary: SummaryData;
   cashflow: CashflowData;
-  creditReadiness: CreditReadinessData;
+  businessHealth: BusinessHealthData;
   recentTransactions: TransactionData[];
 }) {
   const transList = recentTransactions.map(t => 
@@ -187,8 +187,8 @@ Cash Flow Details:
 - Average Daily Outflow: ₦${cashflow.averageDailyOutflow.toLocaleString()}
 - Runway: ${cashflow.runwayDays} days (Risk: ${cashflow.riskLevel})
 
-Credit Status:
-- Score: ${creditReadiness.score}/850 (Risk level: ${creditReadiness.riskLevel})
+Business Health Status:
+- Score: ${businessHealth.score}/100 (Risk level: ${businessHealth.riskLevel})
 
 Recent Transactions:
 ${transList}

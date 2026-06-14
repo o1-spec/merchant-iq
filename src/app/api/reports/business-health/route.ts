@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/response';
-import { calculateSummary, calculateCashflow, calculateCreditReadiness, TransactionData } from '@/lib/analytics';
+import { calculateSummary, calculateCashflow, calculateBusinessHealth, TransactionData } from '@/lib/analytics';
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,13 +32,13 @@ export async function GET(req: NextRequest) {
     const txData = transactions as unknown as TransactionData[];
     const summary = calculateSummary(txData);
     const cashflow = calculateCashflow(txData);
-    const creditReadiness = calculateCreditReadiness(txData);
+    const businessHealth = calculateBusinessHealth(txData);
 
     return successResponse({
       merchant,
       summary,
       cashflow,
-      creditReadiness,
+      creditReadiness: businessHealth,
       aiInsights,
       generatedAt: new Date(),
     });

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Sparkles, UploadCloud, BarChart3, ShieldCheck, ArrowRight, ArrowLeft, X, Check } from 'lucide-react';
+import { Sparkles, UploadCloud, BarChart3, ShieldCheck, ArrowRight, ArrowLeft, X, Check, Coins } from 'lucide-react';
 import { completeOnboarding } from '@/lib/dashboard-client';
 
 interface OnboardingModalProps {
@@ -22,7 +22,7 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
       color: 'text-primary bg-primary-light border-primary-light/50',
       features: [
         'No manual bookkeeping – upload bank/POS CSV statements directly.',
-        'Alternative credit score – prove your creditworthiness to lenders.',
+        'Alternative Business Health Score – prove your creditworthiness to lenders.',
         'Simple English – zero complex corporate financial jargon.',
       ]
     },
@@ -45,13 +45,13 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
     },
     {
       title: 'Review business dashboard',
-      description: 'We instantly calculate key metrics: total revenue, expenses, net profit, cashflow runway, and credit readiness.',
+      description: 'We instantly calculate key metrics: total revenue, expenses, net profit, cashflow runway, and alternative credit ratings.',
       icon: BarChart3,
       color: 'text-emerald-600 bg-emerald-50 border-emerald-100',
       features: [
         'Runway forecast – see exactly how many days your cash position will last.',
-        'Inflow/Outflow trends – track daily and weekly sales patterns.',
-        'Expense breakdown – visualize exactly where your operational cash goes.',
+        '30-Day Cash Forecast – project month-end cash position based on transaction trends.',
+        'Circular Health Dial – track your business health rating out of 100.',
       ]
     },
     {
@@ -63,6 +63,17 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
         'Daily morning brief – custom checklists and alerts for your day.',
         'Interactive chatbot – ask questions like "Can I afford to restock?" anytime.',
         'Repayment coaching – clear risk warnings before you decide to borrow.',
+      ]
+    },
+    {
+      title: 'Capital Readiness & Trust Passport',
+      description: 'Evaluate your borrowing readiness and share verified financial health records with lenders securely.',
+      icon: Coins,
+      color: 'text-amber-600 bg-amber-50 border-amber-100',
+      features: [
+        'Shareable Trust Passport – copy a public link showing verified consistency without leaking cash balances.',
+        'SME Capital Catalog – qualify for business financing from Renmoney, FairMoney, Carbon, and RenSource.',
+        'Underwriting Simulator – model repayments and submit underwriting packages for instant feedback.',
       ]
     }
   ];
@@ -94,7 +105,7 @@ export function OnboardingModal({ onComplete }: OnboardingModalProps) {
         {/* Top bar with Skip/Close */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            Onboarding · {step + 1} of 4
+            Onboarding · {step + 1} of {steps.length}
           </span>
           <button
             onClick={() => handleFinish()}

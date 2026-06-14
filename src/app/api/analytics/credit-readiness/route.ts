@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { successResponse, errorResponse } from '@/lib/response';
-import { calculateCreditReadiness, TransactionData } from '@/lib/analytics';
+import { calculateBusinessHealth, TransactionData } from '@/lib/analytics';
 
 export async function GET(req: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     const txData = transactions as unknown as TransactionData[];
 
     
-    const creditReadiness = calculateCreditReadiness(txData);
+    const businessHealth = calculateBusinessHealth(txData);
 
     
     const now = new Date();
@@ -47,35 +47,35 @@ export async function GET(req: NextRequest) {
     const profile = await prisma.creditProfile.upsert({
       where: { merchantId },
       update: {
-        creditScore: creditReadiness.score,
-        riskRating: creditReadiness.riskLevel,
+        creditScore: businessHealth.score,
+        riskRating: businessHealth.riskLevel,
         debtServiceCoverageRatio: dscr,
         recommendedLoanAmount: recommendedLoan,
         analysisDetails: JSON.stringify({
-          strengths: creditReadiness.strengths,
-          weaknesses: creditReadiness.weaknesses,
-          nextSteps: creditReadiness.nextSteps,
+          strengths: businessHealth.strengths,
+          weaknesses: businessHealth.weaknesses,
+          nextSteps: businessHealth.nextSteps,
           monthlyRevenue30: revenue30,
         }),
       },
       create: {
         merchantId,
-        creditScore: creditReadiness.score,
-        riskRating: creditReadiness.riskLevel,
+        creditScore: businessHealth.score,
+        riskRating: businessHealth.riskLevel,
         debtServiceCoverageRatio: dscr,
         totalDebt: 0.0,
         recommendedLoanAmount: recommendedLoan,
         analysisDetails: JSON.stringify({
-          strengths: creditReadiness.strengths,
-          weaknesses: creditReadiness.weaknesses,
-          nextSteps: creditReadiness.nextSteps,
+          strengths: businessHealth.strengths,
+          weaknesses: businessHealth.weaknesses,
+          nextSteps: businessHealth.nextSteps,
           monthlyRevenue30: revenue30,
         }),
       },
     });
 
     return successResponse({
-      ...creditReadiness,
+      ...businessHealth,
       profileId: profile.id,
     });
   } catch (err) {

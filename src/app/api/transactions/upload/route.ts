@@ -225,46 +225,114 @@ function isSignedNegative(raw: unknown): boolean {
 function autoCategorize(description: string, direction: 'INFLOW' | 'OUTFLOW'): string {
   const desc = description.toLowerCase().trim();
   if (!desc) {
-    return direction === 'INFLOW' ? 'Revenue' : 'Expense';
+    return direction === 'INFLOW' ? 'Other Revenue' : 'Supplier Payment';
   }
 
   if (direction === 'INFLOW') {
-    if (desc.includes('sales') || desc.includes('pos') || desc.includes('payment') || desc.includes('customer')) {
-      return 'Sales';
+    if (
+      desc.includes('sales') ||
+      desc.includes('pos') ||
+      desc.includes('payment') ||
+      desc.includes('customer') ||
+      desc.includes('transfer from') ||
+      desc.includes('received') ||
+      desc.includes('deposit') ||
+      desc.includes('payout')
+    ) {
+      return 'Customer Payment';
     }
-    if (desc.includes('transfer from') || desc.includes('received')) {
-      return 'Sales';
+    if (
+      desc.includes('interest') ||
+      desc.includes('bonus') ||
+      desc.includes('owealth withdrawal') ||
+      desc.includes('savings withdrawal')
+    ) {
+      return 'Investment/Savings Income';
     }
-    if (desc.includes('interest') || desc.includes('bonus') || desc.includes('owealth withdrawal')) {
-      return 'Investment Income';
-    }
-    return 'Revenue';
+    return 'Other Revenue';
   } else {
-    if (desc.includes('netflix') || desc.includes('spotify') || desc.includes('google') || desc.includes('microsoft') || desc.includes('cloud') || desc.includes('aws')) {
-      return 'Software & Subscriptions';
+    if (
+      desc.includes('salary') ||
+      desc.includes('wage') ||
+      desc.includes('staff') ||
+      desc.includes('payroll') ||
+      desc.includes('allowance')
+    ) {
+      return 'Salary/Wages';
     }
-    if (desc.includes('salary') || desc.includes('wage') || desc.includes('staff') || desc.includes('payroll')) {
-      return 'Payroll';
-    }
-    if (desc.includes('rent') || desc.includes('office') || desc.includes('lease') || desc.includes('landlord')) {
+    if (
+      desc.includes('rent') ||
+      desc.includes('office rent') ||
+      desc.includes('lease') ||
+      desc.includes('landlord') ||
+      desc.includes('shop rent')
+    ) {
       return 'Rent & Lease';
     }
-    if (desc.includes('electricity') || desc.includes('power') || desc.includes('water') || desc.includes('utility') || desc.includes('ekedc') || desc.includes('ikedc')) {
+    if (
+      desc.includes('electricity') ||
+      desc.includes('power') ||
+      desc.includes('water') ||
+      desc.includes('utility') ||
+      desc.includes('ekedc') ||
+      desc.includes('ikedc') ||
+      desc.includes('phcn') ||
+      desc.includes('waste')
+    ) {
       return 'Utilities';
     }
-    if (desc.includes('save') || desc.includes('owealth') || desc.includes('investment') || desc.includes('piggyvest')) {
+    if (
+      desc.includes('save') ||
+      desc.includes('owealth') ||
+      desc.includes('investment') ||
+      desc.includes('piggyvest') ||
+      desc.includes('cowrywise')
+    ) {
       return 'Savings & Investments';
     }
-    if (desc.includes('airtime') || desc.includes('data') || desc.includes('mtn') || desc.includes('glo') || desc.includes('airtel') || desc.includes('9mobile')) {
-      return 'Telecommunications';
+    if (
+      desc.includes('transport') ||
+      desc.includes('fuel') ||
+      desc.includes('uber') ||
+      desc.includes('bolt') ||
+      desc.includes('petrol') ||
+      desc.includes('diesel') ||
+      desc.includes('logistics') ||
+      desc.includes('delivery') ||
+      desc.includes('dispatch') ||
+      desc.includes('fare')
+    ) {
+      return 'Transport/Logistics';
     }
-    if (desc.includes('transport') || desc.includes('fuel') || desc.includes('uber') || desc.includes('bolt') || desc.includes('petrol') || desc.includes('diesel')) {
-      return 'Logistics & Travel';
-    }
-    if (desc.includes('fee') || desc.includes('charge') || desc.includes('tax') || desc.includes('vat') || desc.includes('commission')) {
+    if (
+      desc.includes('fee') ||
+      desc.includes('charge') ||
+      desc.includes('tax') ||
+      desc.includes('vat') ||
+      desc.includes('commission') ||
+      desc.includes('stamp duty') ||
+      desc.includes('sms alert')
+    ) {
       return 'Bank Fees & Taxes';
     }
-    return 'Cost of Sales';
+    if (
+      desc.includes('inventory') ||
+      desc.includes('stock') ||
+      desc.includes('purchase') ||
+      desc.includes('supplier') ||
+      desc.includes('wholesale') ||
+      desc.includes('goods') ||
+      desc.includes('material') ||
+      desc.includes('supply') ||
+      desc.includes('restock') ||
+      desc.includes('flour') ||
+      desc.includes('sugar') ||
+      desc.includes('cement') ||
+      desc.includes('drinks')
+    ) {
+      return 'Inventory Purchase';
+    }
+    return 'Supplier Payment';
   }
 }
 
