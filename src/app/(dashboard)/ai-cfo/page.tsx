@@ -56,19 +56,19 @@ const categoryDetails: Record<string, { label: string; icon: any; style: string;
   MORNING_BRIEF: {
     label: 'Morning Brief',
     icon: Clock,
-    style: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-    textStyle: 'text-emerald-700'
+    style: 'bg-primary-light text-primary border-primary-light/40',
+    textStyle: 'text-primary'
   },
   GROWTH_RECOMMENDATION: {
     label: 'Growth Tips',
     icon: TrendingUp,
-    style: 'bg-blue-50 text-blue-700 border-blue-100',
+    style: 'bg-blue-50 text-blue-700 border-blue-100/50',
     textStyle: 'text-blue-700'
   },
   CREDIT_COACH: {
     label: 'Credit Coach',
     icon: Coins,
-    style: 'bg-purple-50 text-purple-700 border-purple-100',
+    style: 'bg-purple-50 text-purple-700 border-purple-100/50',
     textStyle: 'text-purple-700'
   },
 };
@@ -82,9 +82,9 @@ const TABS = [
 
 function SkeletonsList() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 space-y-3 animate-pulse">
+        <div key={i} className="bg-white border border-card-border rounded-2xl p-6 space-y-4 animate-pulse">
           <div className="flex items-start justify-between">
             <div className="h-4 bg-slate-200 rounded w-2/3" />
             <div className="h-5 bg-slate-100 rounded-full w-16" />
@@ -93,11 +93,11 @@ function SkeletonsList() {
             <div className="h-3 bg-slate-100 rounded w-full" />
             <div className="h-3 bg-slate-100 rounded w-5/6" />
           </div>
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between pt-3 border-t border-slate-100">
             <div className="h-3 bg-slate-100 rounded w-24" />
             <div className="flex gap-2">
-              <div className="h-7 w-7 bg-slate-100 rounded" />
-              <div className="h-7 w-7 bg-slate-100 rounded" />
+              <div className="h-7 w-7 bg-slate-100 rounded-lg" />
+              <div className="h-7 w-7 bg-slate-100 rounded-lg" />
             </div>
           </div>
         </div>
@@ -116,14 +116,14 @@ function Modal({ title, onClose, children, maxWidth = 'max-w-lg' }: { title: str
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-xs" onClick={onClose} />
       <div
         ref={ref}
-        className={`relative bg-white rounded-2xl shadow-xl w-full ${maxWidth} max-h-[90vh] overflow-y-auto flex flex-col`}
+        className={`relative bg-white rounded-2xl w-full ${maxWidth} max-h-[90vh] overflow-y-auto flex flex-col border border-card-border`}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
-          <h2 className="text-base font-semibold text-slate-900">{title}</h2>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-700 rounded-lg">
+        <div className="flex items-center justify-between px-6 py-4.5 border-b border-card-border shrink-0">
+          <h2 className="text-base font-bold text-slate-900">{title}</h2>
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-55 rounded-xl transition-all">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -150,18 +150,18 @@ function DeleteInsightConfirm({
         <p className="text-sm text-slate-600">
           Are you sure you want to delete this AI CFO insight report? This action cannot be undone.
         </p>
-        <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm font-medium text-slate-700">
+        <div className="bg-slate-50/70 border border-card-border rounded-xl p-3.5 text-sm font-semibold text-slate-700">
           {title}
         </div>
-        <div className="flex gap-2 justify-end">
+        <div className="flex gap-2 justify-end pt-2">
           <button onClick={onCancel} disabled={deleting}
-            className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-50"
+            className="px-4 py-2 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all hover:border-slate-350"
           >
             Cancel
           </button>
           <button onClick={onConfirm} disabled={deleting}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-red-600 hover:bg-red-700
-              disabled:bg-slate-300 text-white rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-red-600 hover:bg-red-700
+              disabled:bg-slate-300 text-white rounded-xl transition-all"
           >
             {deleting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
             {deleting ? 'Deleting…' : 'Delete'}
@@ -361,16 +361,16 @@ export default function AiCfoPage() {
   return (
     <div className="space-y-6 max-w-[1200px]">
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-card-border">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-slate-900">AI CFO</h1>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
-              <Sparkles className="w-3 h-3 text-emerald-600 shrink-0" />
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">AI CFO</h1>
+            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-bold bg-primary-light text-primary border border-primary-light/40">
+              <Sparkles className="w-3 h-3 text-primary shrink-0" />
               Powered by Gemini
             </span>
           </div>
-          <p className="text-slate-500 text-sm mt-0.5">
+          <p className="text-slate-500 text-sm mt-1.5 font-medium">
             Generate plain-language business advice from your transaction data.
           </p>
         </div>
@@ -465,24 +465,24 @@ export default function AiCfoPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between hover:border-slate-300 transition-all group">
-          <div className="space-y-2.5">
+        <div className="bg-white border border-card-border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group">
+          <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 shrink-0">
-                <Clock className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="p-2 rounded-xl bg-primary-light text-primary border border-primary-light/50 shrink-0">
+                <Clock className="w-4 h-4 text-primary shrink-0" />
               </div>
-              <h3 className="font-semibold text-slate-900 text-sm">Morning Brief</h3>
+              <h3 className="font-bold text-slate-900 text-sm">Morning Brief</h3>
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-slate-500 font-medium leading-relaxed">
               Get a daily summary of sales, cashflow risks, and suggested actions. Runs metrics checking automatically.
             </p>
           </div>
 
-          <div className="mt-5 space-y-2">
+          <div className="mt-6 space-y-2">
             <button
               onClick={() => handleGenerateBrief(false)}
               disabled={isAnyLoading}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white rounded-lg transition-colors shrink-0"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold bg-primary hover:bg-primary-hover disabled:bg-slate-350 text-white rounded-xl transition-all cursor-pointer disabled:cursor-not-allowed"
             >
               {loadingBrief ? (
                 <>
@@ -497,7 +497,7 @@ export default function AiCfoPage() {
             <button
               onClick={() => handleGenerateBrief(true)}
               disabled={isAnyLoading}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors shrink-0"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-950 border border-slate-200 hover:bg-slate-50 rounded-xl transition-all cursor-pointer"
             >
               {loadingBriefRegen ? (
                 <>
@@ -512,24 +512,24 @@ export default function AiCfoPage() {
         </div>
 
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between hover:border-slate-300 transition-all group">
-          <div className="space-y-2.5">
+        <div className="bg-white border border-card-border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group">
+          <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 shrink-0">
+              <div className="p-2 rounded-xl bg-blue-50 text-blue-750 border border-blue-100 shrink-0">
                 <TrendingUp className="w-4 h-4 text-blue-600 shrink-0" />
               </div>
-              <h3 className="font-semibold text-slate-900 text-sm">Growth Insights</h3>
+              <h3 className="font-bold text-slate-900 text-sm">Growth Insights</h3>
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-slate-500 font-medium leading-relaxed">
               Find sales patterns, category velocity analyses, and practical, direct options to expand revenue streams.
             </p>
           </div>
 
-          <div className="mt-5">
+          <div className="mt-6">
             <button
               onClick={handleGenerateGrowth}
               disabled={isAnyLoading}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white rounded-lg transition-colors shrink-0"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold bg-primary hover:bg-primary-hover disabled:bg-slate-355 text-white rounded-xl transition-all cursor-pointer disabled:cursor-not-allowed"
             >
               {loadingGrowth ? (
                 <>
@@ -544,24 +544,24 @@ export default function AiCfoPage() {
         </div>
 
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between hover:border-slate-300 transition-all group">
-          <div className="space-y-2.5">
+        <div className="bg-white border border-card-border rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 group">
+          <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-purple-50 text-purple-700 border border-purple-100 shrink-0">
+              <div className="p-2 rounded-xl bg-purple-50 text-purple-755 border border-purple-100 shrink-0">
                 <Coins className="w-4 h-4 text-purple-600 shrink-0" />
               </div>
-              <h3 className="font-semibold text-slate-900 text-sm">Credit Coach</h3>
+              <h3 className="font-bold text-slate-900 text-sm">Credit Coach</h3>
             </div>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <p className="text-xs text-slate-500 font-medium leading-relaxed">
               Understand your credit readiness, operational health scores, and structured paths to access working loans.
             </p>
           </div>
 
-          <div className="mt-5">
+          <div className="mt-6">
             <button
               onClick={handleGenerateCredit}
               disabled={isAnyLoading}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white rounded-lg transition-colors shrink-0"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold bg-primary hover:bg-primary-hover disabled:bg-slate-360 text-white rounded-xl transition-all cursor-pointer disabled:cursor-not-allowed"
             >
               {loadingCredit ? (
                 <>
@@ -578,24 +578,24 @@ export default function AiCfoPage() {
       </div>
 
 
-      <div className="space-y-4 pt-4 border-t border-slate-100">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="space-y-4 pt-5 border-t border-card-border">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-semibold text-slate-900">Saved Advisory History</h2>
-            <p className="text-slate-400 text-xs mt-0.5">Browse through previously generated business insights.</p>
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Saved Advisory History</h2>
+            <p className="text-slate-400 text-xs mt-1 font-medium">Browse through previously generated business insights.</p>
           </div>
 
 
-          <div className="flex flex-wrap gap-1 p-1 bg-slate-100 rounded-lg border border-slate-200/60 self-start sm:self-auto">
+          <div className="flex flex-wrap gap-1 p-1 bg-slate-100/80 border border-slate-200/50 rounded-xl self-start sm:self-auto">
             {TABS.map((tab) => (
               <button
                 key={tab.value}
                 onClick={() => setSelectedCategory(tab.value)}
                 disabled={loadingInsights}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all
+                className={`px-3.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer
                   ${selectedCategory === tab.value
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200/40'
-                    : 'text-slate-500 hover:text-slate-800 hover:bg-slate-50/50'
+                    ? 'bg-slate-900 text-white font-bold'
+                    : 'text-slate-550 hover:text-slate-850 hover:bg-slate-50/50 font-semibold'
                   } disabled:opacity-50`}
               >
                 {tab.label}
@@ -626,7 +626,7 @@ export default function AiCfoPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {insights.map((ins) => {
               const details = categoryDetails[ins.category];
               const badgeLabel = details?.label ?? ins.category;
@@ -636,27 +636,27 @@ export default function AiCfoPage() {
                 <div
                   key={ins.id}
                   onClick={() => handleSelectInsight(ins)}
-                  className={`group bg-white border rounded-xl p-5 flex flex-col justify-between cursor-pointer transition-all hover:shadow-sm hover:border-slate-300
-                    ${activeResult?.insight.id === ins.id ? 'border-emerald-500 shadow-sm' : 'border-slate-200'}`}
+                  className={`group bg-white border rounded-2xl p-5 flex flex-col justify-between cursor-pointer transition-all hover:border-slate-350 duration-300
+                    ${activeResult?.insight.id === ins.id ? 'border-primary ring-2 ring-primary-light' : 'border-card-border'}`}
                 >
-                  <div className="space-y-2">
+                  <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-3">
-                      <h4 className="font-semibold text-slate-900 text-sm leading-snug group-hover:text-emerald-700 transition-colors">
+                      <h4 className="font-bold text-slate-900 text-sm leading-snug group-hover:text-primary transition-colors">
                         {ins.title}
                       </h4>
-                      <span className={`text-[10px] font-semibold border px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0 ${badgeStyle}`}>
+                      <span className={`text-[10px] font-bold border px-2.5 py-0.5 rounded-full uppercase tracking-wider shrink-0 ${badgeStyle}`}>
                         {badgeLabel}
                       </span>
                     </div>
 
 
-                    <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
+                    <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed font-medium">
                       {stripMarkdown(ins.content)}
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 mt-2 border-t border-slate-100/60">
-                    <span className="text-[10px] text-slate-400 font-medium">
+                  <div className="flex items-center justify-between pt-4 mt-3 border-t border-slate-100/60">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                       {fmtDate(ins.createdAt)}
                     </span>
 
@@ -664,9 +664,9 @@ export default function AiCfoPage() {
 
                       <button
                         onClick={() => handleTogglePin(ins.id)}
-                        className={`p-1.5 rounded-md border transition-colors hover:bg-slate-50
+                        className={`p-1.5 rounded-lg border transition-all hover:bg-slate-50 cursor-pointer
                           ${ins.isPinned
-                            ? 'bg-amber-50 text-amber-600 border-amber-200'
+                            ? 'bg-amber-50 text-amber-600 border-amber-250'
                             : 'text-slate-400 border-slate-200'
                           }`}
                         title={ins.isPinned ? 'Unpin' : 'Pin'}
@@ -681,7 +681,7 @@ export default function AiCfoPage() {
 
                       <button
                         onClick={() => setDeleteInsightId(ins.id)}
-                        className="p-1.5 rounded-md border border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-100 hover:bg-red-50 transition-colors"
+                        className="p-1.5 rounded-lg border border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-155 hover:bg-red-50 transition-all cursor-pointer"
                         title="Delete"
                       >
                         <Trash2 className="w-3.5 h-3.5 shrink-0" />

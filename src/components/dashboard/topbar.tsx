@@ -42,12 +42,12 @@ export function Topbar({ merchantName, businessCategory, onMobileMenuToggle }: T
           aria-label="Notifications"
         >
           <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-primary" />
         </button>
 
         
         <div className="flex items-center gap-2.5 pl-2 border-l border-slate-100 ml-1">
-          <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0">
+          <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-xs shrink-0">
             {initials}
           </div>
           <div className="hidden sm:block">

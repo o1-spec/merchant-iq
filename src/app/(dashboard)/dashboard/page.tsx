@@ -68,13 +68,13 @@ function DashboardError({ onRetry }: { onRetry: () => void }) {
 
 function SnapshotItem({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) {
   return (
-    <div className="flex items-start gap-3">
-      <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
-        <Icon className="w-4 h-4 text-slate-400" />
+    <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-50/70 border border-card-border transition-all duration-300">
+      <div className="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center text-primary shrink-0 border border-primary-light/50">
+        <Icon className="w-5 h-5" />
       </div>
-      <div>
-        <p className="text-xs text-slate-400">{label}</p>
-        <p className="text-sm font-semibold text-slate-800 mt-0.5">{value}</p>
+      <div className="min-w-0">
+        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">{label}</p>
+        <p className="text-sm font-bold text-slate-800 mt-0.5 truncate">{value}</p>
       </div>
     </div>
   );
@@ -109,18 +109,19 @@ export default function DashboardPage() {
     <div className="space-y-8 max-w-[1200px]">
 
       
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-card-border">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            {greeting()}, {firstName(merchant.businessName)}.
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
+            {greeting()}, <span className="text-primary">{firstName(merchant.businessName)}</span>.
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Here&apos;s how your business is performing today.
+          <p className="text-slate-500 text-sm mt-1.5 font-medium">
+            Here&apos;s a quick snapshot of how your business is performing today.
           </p>
         </div>
-        <div className="text-right">
-          <p className="text-sm font-semibold text-slate-800">{merchant.businessName}</p>
-          <p className="text-xs text-slate-400">{merchant.location}</p>
+        <div className="bg-white px-4 py-2.5 rounded-xl border border-card-border text-left sm:text-right">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Current Account</p>
+          <p className="text-sm font-bold text-slate-800 mt-0.5">{merchant.businessName}</p>
+          <p className="text-[11px] font-medium text-slate-400 mt-0.5">{merchant.location}</p>
         </div>
       </div>
 
@@ -158,42 +159,47 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
         
-        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
-          <p className="text-sm font-medium text-slate-500">Cash Runway</p>
-          <div className="flex items-end gap-2">
-            <p className="text-3xl font-bold text-slate-900 tabular-nums">
-              {cashflow.runwayDays === 999 ? '∞' : cashflow.runwayDays}
-            </p>
-            <p className="text-slate-400 text-sm mb-1">days</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-semibold border px-2.5 py-1 rounded-full ${riskBadge[cashflow.riskLevel]}`}>
-              {cashflow.riskLevel} RISK
-            </span>
+        <div className="bg-white border border-card-border rounded-2xl p-6 space-y-4 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Cash Runway</p>
+            <div className="flex items-end gap-2 mt-3">
+              <p className="text-4xl font-extrabold text-slate-900 tabular-nums">
+                {cashflow.runwayDays === 999 ? '∞' : cashflow.runwayDays}
+              </p>
+              <p className="text-slate-400 text-sm font-semibold mb-1">days</p>
+            </div>
+            <div className="flex items-center gap-2 mt-3">
+              <span className={`text-[10px] font-bold border px-2.5 py-0.5 rounded-full uppercase tracking-wider ${riskBadge[cashflow.riskLevel]}`}>
+                {cashflow.riskLevel} RISK
+              </span>
+            </div>
           </div>
           {cashflow.warning && (
-            <p className="text-xs text-slate-400 leading-relaxed pt-1 border-t border-slate-100">
+            <p className="text-xs text-slate-500 leading-relaxed pt-3 border-t border-slate-100 font-medium">
               {cashflow.warning}
             </p>
           )}
         </div>
 
-        
-        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
-          <p className="text-sm font-medium text-slate-500">Credit Readiness</p>
-          <div className="flex items-end gap-2">
-            <p className="text-3xl font-bold text-slate-900 tabular-nums">{creditReadiness.score}</p>
-            <p className="text-slate-400 text-sm mb-1">/ 850</p>
+        <div className="bg-white border border-card-border rounded-2xl p-6 space-y-4 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Credit Readiness</p>
+            <div className="flex items-end gap-2 mt-3">
+              <p className="text-4xl font-extrabold text-slate-900 tabular-nums">{creditReadiness.score}</p>
+              <p className="text-slate-400 text-sm font-semibold mb-1">/ 850</p>
+            </div>
+            <div className="mt-3">
+              <span className={`inline-block text-[10px] font-bold border px-2.5 py-0.5 rounded-full uppercase tracking-wider ${riskBadge[creditReadiness.riskLevel as keyof typeof riskBadge] ?? riskBadge.MEDIUM}`}>
+                {creditReadiness.riskLevel} RISK
+              </span>
+            </div>
           </div>
-          <span className={`inline-block text-xs font-semibold border px-2.5 py-1 rounded-full ${riskBadge[creditReadiness.riskLevel as keyof typeof riskBadge] ?? riskBadge.MEDIUM}`}>
-            {creditReadiness.riskLevel} RISK
-          </span>
 
           {creditReadiness.strengths.length > 0 && (
-            <div className="border-t border-slate-100 pt-2 space-y-1">
+            <div className="border-t border-slate-100 pt-3 space-y-2">
               {creditReadiness.strengths.slice(0, 2).map((s) => (
-                <p key={s} className="text-xs text-emerald-600 flex items-start gap-1.5">
-                  <span className="mt-0.5 shrink-0">✓</span> {s}
+                <p key={s} className="text-xs text-emerald-700 font-semibold flex items-start gap-2">
+                  <span className="mt-0.5 shrink-0 text-emerald-500 font-bold">✓</span> {s}
                 </p>
               ))}
             </div>
@@ -205,8 +211,8 @@ export default function DashboardPage() {
       {/* Recent Transactions */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-900">Recent Transactions</h2>
-          <span className="text-xs text-slate-400">{recentTransactions.length} shown</span>
+          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Recent Transactions</h2>
+          <span className="text-xs font-semibold text-slate-400">{recentTransactions.length} shown</span>
         </div>
         <TransactionTable transactions={recentTransactions} />
       </div>
@@ -214,8 +220,8 @@ export default function DashboardPage() {
       {/* AI Insights */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-slate-900">AI Insights</h2>
-          <span className="text-xs text-slate-400">{latestInsights.length} total</span>
+          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">AI Insights</h2>
+          <span className="text-xs font-semibold text-slate-400">{latestInsights.length} total</span>
         </div>
         {latestInsights.length === 0 ? (
           <InsightsEmptyState />
@@ -229,9 +235,9 @@ export default function DashboardPage() {
       </div>
 
       
-      <div className="bg-white border border-slate-200 rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-slate-700 mb-4">Business Snapshot</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+      <div className="bg-white border border-card-border rounded-2xl p-6 transition-all duration-300">
+        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-5">Business Snapshot</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <SnapshotItem
             icon={Calendar}
             label="Best sales day"

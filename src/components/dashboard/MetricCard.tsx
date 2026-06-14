@@ -1,6 +1,6 @@
 export function MetricCard({ title, value, change, trend, icon }: { title: string; value: string; change: string; trend: 'up' | 'down'; icon: React.ReactNode }) {
   return (
-    <div className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-card border border-border rounded-xl p-6 transition-shadow">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
         <div className="p-2 bg-primary/10 text-primary rounded-lg">

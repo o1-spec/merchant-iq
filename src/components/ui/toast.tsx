@@ -59,9 +59,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`flex items-start gap-3 p-4 rounded-xl shadow-lg border text-xs font-semibold bg-white text-slate-800 transition-all duration-300 pointer-events-auto
+            className={`flex items-start gap-3 p-4 rounded-xl border text-xs font-semibold bg-white text-slate-800 transition-all duration-300 pointer-events-auto
               ${t.type === 'success' 
-                ? 'border-emerald-100 bg-emerald-50 text-emerald-800' 
+                ? 'border-primary-light bg-primary-light text-primary' 
                 : t.type === 'error'
                   ? 'border-red-100 bg-red-50 text-red-800'
                   : t.type === 'warning'
@@ -69,7 +69,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                     : 'border-slate-200 bg-slate-50 text-slate-800'
               }`}
           >
-            {t.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />}
+            {t.type === 'success' && <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />}
             {t.type === 'error' && <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />}
             {t.type === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />}
             {t.type === 'info' && <Info className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />}

@@ -30,7 +30,7 @@ export function DashboardShell({
       />
 
       
-      <div className="flex-1 flex flex-col min-h-screen md:ml-60">
+      <div className="flex-1 flex flex-col min-h-screen md:ml-20 lg:ml-60 transition-all duration-300 min-w-0">
         <Topbar
           merchantName={merchantName}
           businessCategory={businessCategory}

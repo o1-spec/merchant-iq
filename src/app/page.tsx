@@ -107,7 +107,7 @@ export default function LandingPage() {
 
           
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-emerald-600 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center shrink-0">
               <span className="text-white font-bold text-sm">M</span>
             </div>
             <span className="font-bold text-slate-900 text-lg">MerchantIQ</span>
@@ -136,7 +136,7 @@ export default function LandingPage() {
             </Link>
             <Link
               href="/login"
-              className="text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md transition-colors"
+              className="text-sm font-semibold bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-md transition-colors"
             >
               Try Demo
             </Link>
@@ -162,7 +162,7 @@ export default function LandingPage() {
             </nav>
             <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
               <Link href="/login" className="text-sm text-center text-slate-700 py-2">Login</Link>
-              <Link href="/login" className="text-sm text-center font-semibold bg-emerald-600 text-white py-2.5 rounded-md">Try Demo</Link>
+              <Link href="/login" className="text-sm text-center font-semibold bg-primary text-white py-2.5 rounded-md">Try Demo</Link>
             </div>
           </div>
         )}
@@ -177,7 +177,7 @@ export default function LandingPage() {
 
               
               <div>
-                <p className="text-sm font-medium text-emerald-700 mb-5">
+                <p className="text-sm font-medium text-primary mb-5">
                   Built for traders, provision stores, POS agents, and small retailers.
                 </p>
 
@@ -193,7 +193,7 @@ export default function LandingPage() {
                 <div className="flex flex-col sm:flex-row gap-3 mb-12">
                   <Link
                     href="/login"
-                    className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold px-7 py-3.5 rounded-lg transition-all shadow-sm hover:shadow-md text-sm"
+                    className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-7 py-3.5 rounded-lg transition-all text-sm"
                   >
                     Try Demo
                     <ArrowRight className="w-4 h-4" />
@@ -225,7 +225,7 @@ export default function LandingPage() {
 
               
               <div className="hidden lg:block">
-                <div className="bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden">
+                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
 
                   
                   <div className="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
@@ -390,7 +390,7 @@ export default function LandingPage() {
               <div className="max-w-sm w-full">
 
                 
-                <div className="bg-[#e5ddd5] rounded-2xl p-4 shadow-md border border-slate-200">
+                <div className="bg-[#e5ddd5] rounded-2xl p-4 border border-slate-200">
 
                   
                   <div className="flex items-center gap-3 bg-[#075e54] rounded-xl px-4 py-3 mb-4">
@@ -404,7 +404,7 @@ export default function LandingPage() {
                   </div>
 
                   
-                  <div className="bg-white rounded-xl rounded-tl-sm px-4 py-3.5 shadow-sm text-sm text-slate-800 leading-relaxed space-y-2">
+                  <div className="bg-white rounded-xl rounded-tl-sm px-4 py-3.5 text-sm text-slate-800 leading-relaxed space-y-2">
                     {briefState === 'loading' ? (
                       <div className="flex items-center gap-2 py-3 text-slate-400 text-xs">
                         <span className="flex gap-1">
@@ -510,7 +510,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-lg shadow-emerald-900/40 hover:shadow-emerald-900/60 text-base"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base"
               >
                 Try Demo
                 <ArrowRight className="w-5 h-5" />
@@ -534,7 +534,7 @@ export default function LandingPage() {
       <footer className="bg-white border-t border-slate-200 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-emerald-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
               <span className="text-white font-bold text-xs">M</span>
             </div>
             <span className="font-bold text-slate-800 text-sm">MerchantIQ</span>

@@ -1,56 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #1e293b;
-  
-  --primary: #1e3a8a; /* Professional navy blue */
+  /* THEME CONFIGURATION - Update these values to change the visual theme of the app */
+  --primary: #0f172a;          /* Brand primary color (Dark Slate-900) */
+  --primary-hover: #1e293b;    /* Hover state for primary buttons (Slate-800) */
+  --primary-light: #f1f5f9;    /* Accent highlight background (Slate-100) */
   --primary-foreground: #ffffff;
   
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  --background: #f1f5f9;       /* Body page background (light gray slate-100) */
+  --foreground: #0f172a;       /* Base text color (dark slate-900) */
   
-  --border: #e2e8f0;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --card: #ffffff;             /* Card and panel background */
+  --card-foreground: #1e293b;  /* Card text */
+  --card-border: #f1f5f9;      /* Super-light borders for clean cards (slate-100) */
+  --border: #e2e8f0;           /* Standard divider border (slate-200) */
+  
+  --muted: #f8fafc;            /* Disabled or secondary background */
+  --muted-foreground: #64748b;  /* Muted metadata text (slate-500) */
+  
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
   --color-primary-foreground: var(--primary-foreground);
+  
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-card-border: var(--card-border);
   --color-border: var(--border);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    
-    --primary: #3b82f6; /* Lighter blue for dark mode visibility */
-    --primary-foreground: #ffffff;
-    
-    --card: #1e293b;
-    --card-foreground: #f8fafc;
-    
-    --border: #334155;
-    --muted: #334155;
-    --muted-foreground: #94a3b8;
-  }
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Disable all drop shadows in the project */
+*, ::before, ::after {
+  box-shadow: none !important;
+}
+

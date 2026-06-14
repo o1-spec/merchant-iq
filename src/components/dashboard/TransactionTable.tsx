@@ -8,13 +8,13 @@ export function TransactionTable() {
   ];
 
   return (
-    <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
       <div className="p-6 border-b border-border flex justify-between items-center">
         <h2 className="text-lg font-semibold text-foreground">Recent Transactions</h2>
         <button className="text-sm text-primary hover:underline">View All</button>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
+        <table className="w-full text-sm text-left min-w-[600px]">
           <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
             <tr>
               <th className="px-6 py-3 font-medium">Transaction ID</th>
@@ -33,9 +33,9 @@ export function TransactionTable() {
                 <td className="px-6 py-4 text-muted-foreground">{tx.date}</td>
                 <td className="px-6 py-4">
                   <span className={`px-2.5 py-1 text-xs rounded-full font-medium ${
-                    tx.status === 'Completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                    tx.status === 'Pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                    'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    tx.status === 'Completed' ? 'bg-primary-light text-primary border border-primary-light/40' :
+                    tx.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
                   }`}>
                     {tx.status}
                   </span>

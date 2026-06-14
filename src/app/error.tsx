@@ -19,7 +19,7 @@ export default function ErrorBoundary({
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
-      <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8 space-y-6 text-center">
+      <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-6 md:p-8 space-y-6 text-center">
         
         <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto border border-red-100">
           <AlertCircle className="w-6 h-6 text-red-600" />
@@ -71,7 +71,7 @@ export default function ErrorBoundary({
           {showDetails && (
             <div className="mt-3 text-left p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-600 space-y-2 overflow-x-auto max-h-[160px]">
               <p className="font-semibold text-slate-800 break-all">
-                Error: {error.message || 'Unknown runtime error'}
+                Error: {(error.message || 'Unknown runtime error').replace(/[a-zA-Z0-9-]+\.pooler\.supabase\.com/g, 'database-server')}
               </p>
               {error.digest && (
                 <p className="text-slate-400 font-medium select-all">

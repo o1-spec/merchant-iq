@@ -17,7 +17,7 @@ export default function GlobalError({
   return (
     <html lang="en" className="h-full">
       <body className="h-full min-h-full bg-slate-50 flex items-center justify-center p-6 font-sans antialiased text-slate-800">
-        <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8 space-y-6 text-center">
+        <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-6 md:p-8 space-y-6 text-center">
           
           <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto border border-red-100">
             <AlertCircle className="w-6 h-6 text-red-600" />

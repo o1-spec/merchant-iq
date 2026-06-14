@@ -7,7 +7,7 @@ function Skeleton({ className }: { className?: string }) {
 export default function Loading() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
-      <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl shadow-sm p-6 md:p-8 space-y-6">
+      <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl p-6 md:p-8 space-y-6">
         
         <div className="text-center space-y-3">
           <Skeleton className="h-8 w-32 mx-auto" />

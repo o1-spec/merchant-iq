@@ -100,3 +100,22 @@ model LoanApplication {
   @@index([merchantId])
 }
 
+model StatementTemplate {
+  id                String   @id @default(uuid())
+  /// Sorted, lowercased, pipe-joined header columns. Used as a unique fingerprint.
+  /// e.g. "amount|balance|credit|date|debit|narration"
+  headersSignature  String   @unique
+  /// Friendly name inferred by AI e.g. "GTBank", "Moniepoint POS"
+  detectedBankName  String?
+  /// 0-indexed row where transaction table headers are found (skip metadata rows above)
+  headerRowIndex    Int
+  dateColumn        String
+  descriptionColumn String
+  /// Set when bank uses a single signed-value amount column
+  amountColumn      String?
+  /// Set when bank uses split Debit/Credit columns
+  inflowColumn      String?
+  outflowColumn     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

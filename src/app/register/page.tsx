@@ -32,7 +32,7 @@ function Field({
         id={id} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder} autoComplete={autoComplete} disabled={disabled}
         className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-slate-900 bg-white
-          placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500
+          placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary
           focus:border-transparent transition-shadow
           disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed
           ${error ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'}`}
@@ -55,7 +55,7 @@ function SelectField({
         <select
           id={id} value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled}
           className={`w-full appearance-none px-3.5 py-2.5 rounded-lg border text-sm bg-white pr-9
-            focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+            focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
             transition-shadow disabled:bg-slate-50 disabled:cursor-not-allowed
             ${!value ? 'text-slate-400' : 'text-slate-900'}
             ${error ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'}`}
@@ -131,7 +131,7 @@ export default function RegisterPage() {
       
       <header className="bg-white border-b border-slate-200 px-6 py-4 shrink-0">
         <Link href="/" className="inline-flex items-center gap-2">
-          <div className="w-7 h-7 rounded-md bg-emerald-600 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
             <span className="text-white font-bold text-xs">M</span>
           </div>
           <span className="font-bold text-slate-900 text-base">MerchantIQ</span>
@@ -201,8 +201,8 @@ export default function RegisterPage() {
               
               <button
                 type="submit" disabled={loading}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700
-                  active:bg-emerald-800 disabled:bg-slate-300 disabled:cursor-not-allowed
+                className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover
+                  active:bg-slate-950 disabled:bg-slate-300 disabled:cursor-not-allowed
                   text-white font-semibold py-2.5 rounded-lg text-sm transition-colors"
               >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -214,7 +214,7 @@ export default function RegisterPage() {
             <div className="h-px bg-slate-200 my-6" />
             <p className="text-sm text-slate-600 text-center">
               Already have an account?{' '}
-              <Link href="/login" className="text-emerald-700 font-semibold hover:underline">Sign in</Link>
+              <Link href="/login" className="text-primary font-semibold hover:underline">Sign in</Link>
             </p>
 
           </div>

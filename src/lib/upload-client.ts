@@ -1,7 +1,7 @@
 export interface UploadRowError {
   row: number;
   errors: Record<string, string[]>;
-  raw: Record<string, any>;
+  raw: Record<string, unknown>;
 }
 
 export interface UploadResponse {
@@ -19,6 +19,10 @@ export interface UploadResponse {
     direction: 'INFLOW' | 'OUTFLOW';
     status: 'COMPLETED' | 'PENDING' | 'FAILED';
   }>;
+  /** Name of the bank/institution detected by AI or from cache. */
+  detectedBank: string | null;
+  /** True if the layout was resolved from the DB cache (no AI call made). */
+  templateCacheHit: boolean;
 }
 
 export async function uploadTransactions(file: File): Promise<UploadResponse> {

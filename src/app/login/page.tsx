@@ -42,7 +42,7 @@ function Field({
         autoComplete={autoComplete}
         disabled={disabled}
         className={`w-full px-3.5 py-2.5 rounded-lg border text-sm text-slate-900 bg-white
-          placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500
+          placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary
           focus:border-transparent transition-shadow
           disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed
           ${error ? 'border-red-400 focus:ring-red-400' : 'border-slate-300'}`}
@@ -108,7 +108,7 @@ export default function LoginPage() {
       
       <header className="bg-white border-b border-slate-200 px-6 py-4 shrink-0">
         <Link href="/" className="inline-flex items-center gap-2">
-          <div className="w-7 h-7 rounded-md bg-emerald-600 flex items-center justify-center">
+          <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
             <span className="text-white font-bold text-xs">M</span>
           </div>
           <span className="font-bold text-slate-900 text-base">MerchantIQ</span>
@@ -171,8 +171,8 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={busy}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700
-                  active:bg-emerald-800 disabled:bg-slate-300 disabled:cursor-not-allowed
+                className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover
+                  active:bg-slate-950 disabled:bg-slate-300 disabled:cursor-not-allowed
                   text-white font-semibold py-2.5 rounded-lg text-sm transition-colors mt-1"
               >
                 {loading && <Loader2 className="w-4 h-4 animate-spin" />}
@@ -210,7 +210,7 @@ export default function LoginPage() {
 
             <p className="text-sm text-slate-600 text-center">
               Don&apos;t have an account?{' '}
-              <Link href="/register" className="text-emerald-700 font-semibold hover:underline">
+              <Link href="/register" className="text-primary font-semibold hover:underline">
                 Create one
               </Link>
             </p>
