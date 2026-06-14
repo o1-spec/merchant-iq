@@ -14,6 +14,7 @@ import {
   RefreshCw,
   X,
   Loader2,
+  Eye,
 } from 'lucide-react';
 import {
   getTransactions,
@@ -369,6 +370,91 @@ function DeleteConfirm({
   );
 }
 
+function ViewTransactionModal({
+  tx,
+  onClose,
+}: {
+  tx: Transaction;
+  onClose: () => void;
+}) {
+  return (
+    <Modal title="Transaction Details" onClose={onClose}>
+      <div className="space-y-4.5 text-sm text-slate-700">
+        <div className="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Amount</span>
+            <span className={`text-lg font-extrabold ${tx.direction === 'INFLOW' ? 'text-slate-900' : 'text-red-600'}`}>
+              {tx.direction === 'INFLOW' ? '+' : '-'}{fmt(tx.amount)}
+            </span>
+          </div>
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</span>
+            <span className="font-semibold text-slate-800">{fmtDate(tx.date)}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Type / Direction</span>
+            <span className="font-semibold text-slate-800 uppercase text-xs flex items-center gap-2 mt-1">
+              <span className={`px-2.5 py-0.5 rounded-full border text-[9px] font-bold ${tx.type === 'INCOME' ? 'bg-primary-light text-primary border-primary-light/40' : 'bg-orange-50 text-orange-700 border-orange-100/50'}`}>
+                {tx.type}
+              </span>
+              <span className="text-slate-500 font-semibold">{tx.direction}</span>
+            </span>
+          </div>
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</span>
+            <span className="mt-1 block">
+              <span className={`text-[9px] font-bold border px-2.5 py-0.5 rounded-full uppercase tracking-wider ${statusBadge[tx.status] ?? ''}`}>
+                {tx.status}
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Category</span>
+            <span className="font-bold text-slate-800 text-xs mt-1 block">{tx.category}</span>
+          </div>
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Payment Method</span>
+            <span className="font-semibold text-slate-800 text-xs mt-1 block">{tx.paymentMethod}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Source</span>
+            <span className="font-semibold text-slate-800 text-xs mt-1 block uppercase">{tx.source}</span>
+          </div>
+          <div>
+            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Transaction ID</span>
+            <span className="font-medium text-slate-500 text-[10px] select-all font-mono mt-1 block">{tx.id}</span>
+          </div>
+        </div>
+
+        <div className="pt-2">
+          <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Description</span>
+          <p className="bg-slate-50 border border-slate-150 rounded-xl p-3.5 text-slate-700 text-xs leading-relaxed italic whitespace-pre-wrap font-medium">
+            {tx.description || 'No description available for this transaction.'}
+          </p>
+        </div>
+
+        <div className="flex justify-end pt-4 border-t border-card-border mt-6">
+          <button
+            onClick={onClose}
+            className="px-5 py-2.5 text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl transition-all cursor-pointer shadow-sm"
+          >
+            Close Details
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
 export default function TransactionsPage() {
   const { success, error: toastError } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -386,6 +472,7 @@ export default function TransactionsPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [editTx, setEditTx] = useState<Transaction | null>(null);
   const [deleteTx, setDeleteTx] = useState<Transaction | null>(null);
+  const [viewTx, setViewTx] = useState<Transaction | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [modalError, setModalError] = useState('');
@@ -681,6 +768,13 @@ export default function TransactionsPage() {
                       <td className="px-5 py-4 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1.5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                           <button
+                            onClick={() => setViewTx(tx)}
+                            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                            title="View Details"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                          <button
                             onClick={() => { setModalError(''); setEditTx(tx); }}
                             className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
                             title="Edit"
@@ -779,6 +873,13 @@ export default function TransactionsPage() {
           onConfirm={handleDelete}
           onCancel={() => setDeleteTx(null)}
           deleting={deleting}
+        />
+      )}
+
+      {viewTx && (
+        <ViewTransactionModal
+          tx={viewTx}
+          onClose={() => setViewTx(null)}
         />
       )}
     </div>
