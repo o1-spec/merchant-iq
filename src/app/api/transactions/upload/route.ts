@@ -86,19 +86,30 @@ const FINANCIAL_KEYWORDS = [
  * Returns the 0-based index and the non-empty column names found there.
  */
 function detectHeaderRow(rows: string[][]): { headerRowIndex: number; headers: string[] } {
+  let bestRowIndex = -1;
+  let maxMatchCount = 0;
+  let bestRowHeaders: string[] = [];
+
   for (let i = 0; i < Math.min(rows.length, 12); i++) {
     const row = rows[i];
     const matchCount = row.filter((cell) =>
       FINANCIAL_KEYWORDS.some((kw) => cell.trim().toLowerCase() === kw || cell.toLowerCase().includes(kw))
     ).length;
 
-    if (matchCount >= 2) {
-      return {
-        headerRowIndex: i,
-        headers: row.map((c) => String(c).trim()),
-      };
+    if (matchCount >= 2 && matchCount > maxMatchCount) {
+      maxMatchCount = matchCount;
+      bestRowIndex = i;
+      bestRowHeaders = row.map((c) => String(c).trim());
     }
   }
+
+  if (bestRowIndex >= 0) {
+    return {
+      headerRowIndex: bestRowIndex,
+      headers: bestRowHeaders,
+    };
+  }
+
   // No recognizable header row — treat all rows as data, use -1 to indicate no header
   return { headerRowIndex: -1, headers: [] };
 }
@@ -137,7 +148,7 @@ You will be given the first rows of a raw bank statement file as plain text (row
 Your task is to return the EXACT 0-based column indices needed to extract transaction data.
 
 Context:
-- ${hasHeaders ? 'Row 0 in the snippet appears to be the transaction header row.' : 'This file has NO recognizable header row — all rows are transaction data. Set headerRowIndex to 0.'}
+- ${hasHeaders ? 'Row 0 in the snippet appears to be the transaction header row.' : 'This file has NO recognizable header row — all rows are transaction data. Set headerRowIndex to -1.'}
 - Many Nigerian banks (OPay, GTBank, Moniepoint, etc.) use "--" to mean "not applicable" in a split debit/credit layout.
 
 Our internal fields and how to map them:
@@ -149,7 +160,7 @@ Our internal fields and how to map them:
 
 Rules:
 - Set EITHER "amountColumnIndex" OR ("inflowColumnIndex" + "outflowColumnIndex"), NEVER both.
-- "headerRowIndex" is the 0-indexed row number where actual transactions start (first data row after any headers, or 0 if no headers).
+- "headerRowIndex" is the 0-indexed row number containing the transaction table headers. The backend reads from headerRowIndex + 1. If no headers are present and transaction data starts immediately, set headerRowIndex to -1.
 - Omit any field you cannot confidently determine.
 - Guess "detectedBankName" from context (e.g. "OPay", "GTBank", "Moniepoint"). Omit if unclear.
 
@@ -172,7 +183,23 @@ ${snippet}
   return generateGeminiJson<AiMappingResponse>(prompt);
 }
 
-// ─── Amount Parsing ───────────────────────────────────────────────────────────
+// ─── Amount Parsing & Helpers ──────────────────────────────────────────────────
+
+function parseNumberOrDash(str: string): number | null {
+  const s = str.trim();
+  if (s === '--' || s === '-' || s === '') return 0;
+  const n = parseFloat(s.replace(/[₦$€£,\s]/g, ''));
+  return isNaN(n) ? null : Math.abs(n);
+}
+
+function isDateStr(str: string): boolean {
+  const s = str.trim();
+  if (!s) return false;
+  if (/\d/.test(s) === false) return false;
+  if (/^\d+$/.test(s)) return false;
+  const ts = Date.parse(s);
+  return !isNaN(ts);
+}
 
 function parseAmount(raw: unknown): number {
   if (typeof raw === 'number') return Math.abs(raw);
@@ -193,6 +220,175 @@ function parseDate(raw: unknown): Date {
 function isSignedNegative(raw: unknown): boolean {
   const str = String(raw ?? '').replace(/[₦$€£,\s]/g, '').trim();
   return str.startsWith('-') || str.startsWith('(');
+}
+
+function detectOpayLayout(rows: string[][]): ParseConfig | null {
+  // 1. Check for header row containing OPay keywords
+  for (let i = 0; i < Math.min(rows.length, 12); i++) {
+    const row = rows[i];
+    if (row.length < 6) continue;
+    const normalized = row.map((c) => String(c).trim().toLowerCase());
+    
+    const hasTransDate = normalized.some((cell) => cell.includes('trans. date') || cell === 'trans date');
+    const hasDesc = normalized.some((cell) => cell === 'description' || cell === 'narration' || cell === 'particulars');
+    const hasDebit = normalized.some((cell) => cell.includes('debit') || cell.includes('dr.') || cell.includes('withdrawal') || cell.includes('outflow') || cell === 'dr');
+    const hasCredit = normalized.some((cell) => cell.includes('credit') || cell.includes('cr.') || cell.includes('deposit') || cell.includes('inflow') || cell === 'cr');
+    const hasBalance = normalized.some((cell) => cell.includes('balance'));
+    
+    if (hasTransDate && hasDesc && (hasDebit || hasCredit) && hasBalance) {
+      const dateColumnIndex = row.findIndex((c) => {
+        const val = String(c).toLowerCase();
+        return val.includes('trans. date') || val === 'trans date' || val === 'date';
+      });
+      const descriptionColumnIndex = row.findIndex((c) => {
+        const val = String(c).toLowerCase();
+        return val === 'description' || val === 'narration' || val === 'particulars';
+      });
+      const outflowColumnIndex = row.findIndex((c) => {
+        const val = String(c).toLowerCase();
+        return val.includes('debit') || val.includes('dr.') || val.includes('withdrawal') || val === 'dr';
+      });
+      const inflowColumnIndex = row.findIndex((c) => {
+        const val = String(c).toLowerCase();
+        return val.includes('credit') || val.includes('cr.') || val.includes('deposit') || val === 'cr';
+      });
+
+      return {
+        headerRowIndex: i,
+        detectedBankName: 'OPay',
+        dateColumnIndex: dateColumnIndex >= 0 ? dateColumnIndex : 0,
+        descriptionColumnIndex: descriptionColumnIndex >= 0 ? descriptionColumnIndex : 2,
+        outflowColumnIndex: outflowColumnIndex >= 0 ? outflowColumnIndex : 3,
+        inflowColumnIndex: inflowColumnIndex >= 0 ? inflowColumnIndex : 4,
+        amountColumnIndex: -1,
+      };
+    }
+  }
+
+  // 2. Check for headerless OPay-like 8-column layout
+  let matchingRowsCount = 0;
+  let firstMatchingRowIndex = -1;
+  
+  for (let i = 0; i < Math.min(rows.length, 15); i++) {
+    const row = rows[i];
+    if (row.length !== 8) continue;
+    
+    const col0IsDate = isDateStr(row[0]);
+    const col2IsDesc = row[2].trim().length > 0 && !isDateStr(row[2]) && parseNumberOrDash(row[2]) === null;
+    const col3Amt = parseNumberOrDash(row[3]);
+    const col4Amt = parseNumberOrDash(row[4]);
+    const col5Amt = parseNumberOrDash(row[5]);
+    
+    if (col0IsDate && col2IsDesc && col3Amt !== null && col4Amt !== null && col5Amt !== null) {
+      matchingRowsCount++;
+      if (firstMatchingRowIndex === -1) {
+        firstMatchingRowIndex = i;
+      }
+    }
+  }
+  
+  if (matchingRowsCount >= 2) {
+    return {
+      headerRowIndex: firstMatchingRowIndex - 1,
+      detectedBankName: 'OPay',
+      dateColumnIndex: 0,
+      descriptionColumnIndex: 2,
+      outflowColumnIndex: 3,
+      inflowColumnIndex: 4,
+      amountColumnIndex: -1,
+    };
+  }
+  
+  return null;
+}
+
+function detectLayoutByHeaders(headers: string[], headerRowIndex: number): ParseConfig | null {
+  const normalized = headers.map((h) => h.trim().toLowerCase());
+  
+  const dateIdx = normalized.findIndex((h) => 
+    h === 'date' || h === 'trans date' || h === 'trans. date' || h === 'transaction date' || h === 'value date' || h.includes('date')
+  );
+  
+  const descIdx = normalized.findIndex((h) => 
+    h === 'narration' || h === 'description' || h === 'particulars' || h === 'remarks' || h === 'memo' ||
+    h.includes('narration') || h.includes('description') || h.includes('particulars') || h.includes('remark')
+  );
+  
+  const debitIdx = normalized.findIndex((h) => 
+    h === 'debit' || h === 'dr' || h === 'dr.' || h === 'withdrawal' || h === 'outflow' || h === 'paid' || h === 'payment out' ||
+    h.includes('debit') || h.includes('withdrawal') || h.includes('outflow')
+  );
+  
+  const creditIdx = normalized.findIndex((h) => 
+    h === 'credit' || h === 'cr' || h === 'cr.' || h === 'deposit' || h === 'inflow' || h === 'received' || h === 'payment in' ||
+    h.includes('credit') || h.includes('deposit') || h.includes('inflow')
+  );
+  
+  const amtIdx = normalized.findIndex((h) => 
+    h === 'amount' || h === 'value' || h === 'sum' || h === 'tran amount' || h === 'transaction amount' || h === 'amt' ||
+    h.includes('amount')
+  );
+
+  if (dateIdx >= 0 && descIdx >= 0) {
+    if (debitIdx >= 0 && creditIdx >= 0) {
+      return {
+        headerRowIndex,
+        dateColumnIndex: dateIdx,
+        descriptionColumnIndex: descIdx,
+        amountColumnIndex: -1,
+        inflowColumnIndex: creditIdx,
+        outflowColumnIndex: debitIdx,
+      };
+    }
+    if (amtIdx >= 0) {
+      return {
+        headerRowIndex,
+        dateColumnIndex: dateIdx,
+        descriptionColumnIndex: descIdx,
+        amountColumnIndex: amtIdx,
+        inflowColumnIndex: -1,
+        outflowColumnIndex: -1,
+      };
+    }
+  }
+
+  return null;
+}
+
+function validateParseConfig(config: ParseConfig, rows: string[][]) {
+  const maxCols = Math.max(...rows.map((r) => r.length));
+
+  if (config.headerRowIndex < -1 || config.headerRowIndex >= rows.length) {
+    throw new Error(`Invalid headerRowIndex: ${config.headerRowIndex}`);
+  }
+
+  const indices = [
+    config.dateColumnIndex,
+    config.descriptionColumnIndex,
+  ];
+
+  if (config.amountColumnIndex >= 0) {
+    indices.push(config.amountColumnIndex);
+  }
+  if (config.inflowColumnIndex >= 0) {
+    indices.push(config.inflowColumnIndex);
+  }
+  if (config.outflowColumnIndex >= 0) {
+    indices.push(config.outflowColumnIndex);
+  }
+
+  for (const index of indices) {
+    if (!Number.isInteger(index) || index < 0 || index >= maxCols) {
+      throw new Error(`Invalid column mapping index: ${index}`);
+    }
+  }
+
+  const hasAmount = config.amountColumnIndex >= 0;
+  const hasSplit = config.inflowColumnIndex >= 0 || config.outflowColumnIndex >= 0;
+
+  if (!hasAmount && !hasSplit) {
+    throw new Error("No valid amount, inflow, or outflow column was detected.");
+  }
 }
 
 // ─── Config from DB record ────────────────────────────────────────────────────
@@ -290,20 +486,42 @@ export async function POST(req: NextRequest) {
       ? buildHeaderSignature(headers)
       : buildDataSignature(rows[0]);
 
-    // ── 3. Template cache lookup ───────────────────────────────────────────
-    let config: ParseConfig;
+    // ── 3. Resolve Parse Config ────────────────────────────────────────────
+    let config: ParseConfig | null = null;
     let cacheHit = false;
-    const cached = await prisma.statementTemplate.findUnique({
-      where: { headersSignature: signature },
-    });
 
-    if (cached) {
-      console.log(`[upload] Template cache HIT for: ${cached.detectedBankName ?? signature}`);
-      config = configFromCache(cached);
-      cacheHit = true;
-    } else {
-      // ── 4. Ask Gemini (once per new layout) ──────────────────────────────
-      console.log(`[upload] Cache MISS. Invoking Gemini. hasHeaders=${hasHeaders}`);
+    // Phase 1: Known template detection first
+    const opayConfig = detectOpayLayout(rows);
+    if (opayConfig) {
+      console.log('[upload] Phase 1: Deterministic OPay layout detected.');
+      config = opayConfig;
+    }
+
+    // Phase 2: Keyword header detection second
+    if (!config && hasHeaders) {
+      const headerConfig = detectLayoutByHeaders(headers, detectedHeaderRow);
+      if (headerConfig) {
+        console.log('[upload] Phase 2: Confident keyword-based header layout detected.');
+        config = headerConfig;
+      }
+    }
+
+    // Phase 3: Template cache lookup third
+    if (!config) {
+      const cached = await prisma.statementTemplate.findUnique({
+        where: { headersSignature: signature },
+      });
+
+      if (cached) {
+        console.log(`[upload] Phase 3: Template cache HIT for: ${cached.detectedBankName ?? signature}`);
+        config = configFromCache(cached);
+        cacheHit = true;
+      }
+    }
+
+    // Phase 4: Gemini fallback fourth
+    if (!config) {
+      console.log(`[upload] Phase 4: Cache MISS. Invoking Gemini fallback. hasHeaders=${hasHeaders}`);
 
       // Build a numbered snippet so Gemini can identify rows by index
       const snippet = rows
@@ -319,12 +537,21 @@ export async function POST(req: NextRequest) {
         aiSucceeded = true;
         console.log(`[upload] Gemini mapped: ${JSON.stringify(aiResult)}`);
       } catch (aiErr) {
-        console.error('[upload] Gemini failed, using keyword heuristic:', aiErr);
+        console.error('[upload] Gemini failed, falling back:', aiErr);
       }
 
       if (aiSucceeded && aiResult) {
-        config = configFromAi(aiResult);
+        const potentialConfig = configFromAi(aiResult);
+        try {
+          validateParseConfig(potentialConfig, rows);
+          config = potentialConfig;
+        } catch (validationError) {
+          console.warn('[upload] AI configuration failed validation:', validationError);
+          aiSucceeded = false;
+        }
+      }
 
+      if (aiSucceeded && aiResult && config) {
         // Persist for future uploads of the same layout
         try {
           await prisma.statementTemplate.create({
@@ -332,7 +559,6 @@ export async function POST(req: NextRequest) {
               headersSignature: signature,
               detectedBankName: aiResult.detectedBankName ?? null,
               headerRowIndex: aiResult.headerRowIndex,
-              // Store indices as strings in the existing schema columns
               dateColumn: String(aiResult.dateColumnIndex),
               descriptionColumn: String(aiResult.descriptionColumnIndex),
               amountColumn: (aiResult.amountColumnIndex ?? -1) >= 0
@@ -350,35 +576,60 @@ export async function POST(req: NextRequest) {
         } catch (saveErr) {
           console.warn('[upload] Could not persist template:', saveErr);
         }
-      } else {
-        // ── Keyword heuristic fallback (result NOT cached) ────────────────
-        console.log('[upload] Using keyword heuristic — result will NOT be cached.');
-        const hdrRow = hasHeaders ? rows[detectedHeaderRow] : rows[0];
-        const fi = (keyword: string) =>
-          hdrRow.findIndex((h) => h.trim().toLowerCase().includes(keyword));
+      }
+    }
 
-        const dateIdx = fi('date') >= 0 ? fi('date') : fi('value dat');
-        const descIdx = fi('narration') >= 0 ? fi('narration')
-          : fi('description') >= 0 ? fi('description')
-          : fi('remark') >= 0 ? fi('remark')
-          : fi('particulars');
-        const amtIdx = fi('amount') >= 0 ? fi('amount') : fi('tran');
-        const inflowIdx = fi('credit') >= 0 ? fi('credit') : fi('deposit');
-        const outflowIdx = fi('debit') >= 0 ? fi('debit') : fi('withdrawal');
+    // Phase 5: Absolute heuristic fallback
+    if (!config) {
+      console.log('[upload] Phase 5: Using default/heuristic fallback.');
+      const hdrRow = hasHeaders ? rows[detectedHeaderRow] : rows[0];
+      const fi = (keyword: string) =>
+        hdrRow.findIndex((h) => h.trim().toLowerCase().includes(keyword));
 
-        const useSplit = inflowIdx >= 0 && outflowIdx >= 0;
+      const dateIdx = fi('date') >= 0 ? fi('date') : fi('value dat');
+      const descIdx = fi('narration') >= 0 ? fi('narration')
+        : fi('description') >= 0 ? fi('description')
+        : fi('remark') >= 0 ? fi('remark')
+        : fi('particulars');
+      const amtIdx = fi('amount') >= 0 ? fi('amount') : fi('tran');
+      const inflowIdx = fi('credit') >= 0 ? fi('credit') : fi('deposit');
+      const outflowIdx = fi('debit') >= 0 ? fi('debit') : fi('withdrawal');
+
+      const useSplit = inflowIdx >= 0 && outflowIdx >= 0;
+      config = {
+        headerRowIndex: hasHeaders ? detectedHeaderRow : 0,
+        dateColumnIndex: dateIdx >= 0 ? dateIdx : 0,
+        descriptionColumnIndex: descIdx >= 0 ? descIdx : 1,
+        amountColumnIndex: useSplit ? -1 : (amtIdx >= 0 ? amtIdx : -1),
+        inflowColumnIndex: useSplit ? inflowIdx : -1,
+        outflowColumnIndex: useSplit ? outflowIdx : -1,
+      };
+
+      // Also validate heuristic config bounds
+      try {
+        validateParseConfig(config, rows);
+      } catch (hError) {
+        console.error('[upload] Heuristic config is invalid:', hError);
+        // absolute fallback
         config = {
           headerRowIndex: hasHeaders ? detectedHeaderRow : 0,
-          dateColumnIndex: dateIdx >= 0 ? dateIdx : 0,
-          descriptionColumnIndex: descIdx >= 0 ? descIdx : 1,
-          amountColumnIndex: useSplit ? -1 : (amtIdx >= 0 ? amtIdx : -1),
-          inflowColumnIndex: useSplit ? inflowIdx : -1,
-          outflowColumnIndex: useSplit ? outflowIdx : -1,
+          dateColumnIndex: 0,
+          descriptionColumnIndex: Math.min(rows[0].length - 1, 2),
+          amountColumnIndex: -1,
+          inflowColumnIndex: Math.min(rows[0].length - 1, 4),
+          outflowColumnIndex: Math.min(rows[0].length - 1, 3),
         };
       }
     }
 
-    // ── 5. Process data rows using resolved config ─────────────────────────
+    // ── 4. Validate resolved config & slice data rows ──────────────────────
+    try {
+      validateParseConfig(config, rows);
+    } catch (validationErr) {
+      console.error('[upload] Final configuration validation failed:', validationErr);
+      return errorResponse(`Could not map the file structure: ${(validationErr as Error).message}`, 400);
+    }
+
     const dataRows = rows.slice(config.headerRowIndex + 1);
 
     /** Mirrors the Transaction model fields accepted by createMany. */
@@ -463,16 +714,46 @@ export async function POST(req: NextRequest) {
     // ── 6. Bulk insert valid rows ──────────────────────────────────────────
     if (validRows.length > 0) {
       await prisma.transaction.createMany({ data: validRows });
-    }
 
-    return successResponse({
-      insertedCount: validRows.length,
-      failedCount: errors.length,
-      errors,
-      preview: validRows.slice(0, 5),
-      detectedBank: config.detectedBankName ?? null,
-      templateCacheHit: cacheHit,
-    });
+      return successResponse({
+        insertedCount: validRows.length,
+        failedCount: errors.length,
+        errors,
+        preview: validRows.slice(0, 5),
+        detectedBank: config.detectedBankName ?? null,
+        templateCacheHit: cacheHit,
+        ...(process.env.NODE_ENV === 'development' ? {
+          mappingDebug: {
+            headerRowIndex: config.headerRowIndex,
+            dateColumnIndex: config.dateColumnIndex,
+            descriptionColumnIndex: config.descriptionColumnIndex,
+            amountColumnIndex: config.amountColumnIndex,
+            inflowColumnIndex: config.inflowColumnIndex,
+            outflowColumnIndex: config.outflowColumnIndex,
+            sampleDataRow: rows[config.headerRowIndex + 1] || null,
+          }
+        } : {}),
+      });
+    } else {
+      return successResponse({
+        insertedCount: 0,
+        failedCount: errors.length,
+        errors,
+        preview: [],
+        detectedBank: config.detectedBankName ?? null,
+        templateCacheHit: cacheHit,
+        warning: 'No transaction rows were extracted. Please check your column mappings or upload template.',
+        mappingDebug: {
+          headerRowIndex: config.headerRowIndex,
+          dateColumnIndex: config.dateColumnIndex,
+          descriptionColumnIndex: config.descriptionColumnIndex,
+          amountColumnIndex: config.amountColumnIndex,
+          inflowColumnIndex: config.inflowColumnIndex,
+          outflowColumnIndex: config.outflowColumnIndex,
+          sampleDataRow: rows[config.headerRowIndex + 1] || null,
+        }
+      });
+    }
   } catch (err) {
     const error = err as Error;
     console.error('[upload] Unhandled error:', error);
