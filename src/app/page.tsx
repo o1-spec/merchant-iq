@@ -101,11 +101,11 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
 
-      
+
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
 
-          
+
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center shrink-0">
               <span className="text-white font-bold text-sm">M</span>
@@ -113,20 +113,20 @@ export default function LandingPage() {
             <span className="font-bold text-slate-900 text-lg">MerchantIQ</span>
           </Link>
 
-          
+
           <nav className="hidden md:flex items-center gap-8">
-            <button onClick={() => smoothScrollTo('features')} className="text-sm text-slate-600 hover:text-slate-900 transition-colors">
+            <button onClick={() => smoothScrollTo('features')} className="text-sm text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">
               Features
             </button>
-            <button onClick={() => smoothScrollTo('how-it-works')} className="text-sm text-slate-600 hover:text-slate-900 transition-colors">
+            <button onClick={() => smoothScrollTo('how-it-works')} className="text-sm text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">
               How It Works
             </button>
-            <button onClick={() => smoothScrollTo('why-merchantiq')} className="text-sm text-slate-600 hover:text-slate-900 transition-colors">
+            <button onClick={() => smoothScrollTo('why-merchantiq')} className="text-sm text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">
               Why MerchantIQ
             </button>
           </nav>
 
-          
+
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/login"
@@ -142,7 +142,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-slate-600 hover:text-slate-900"
@@ -152,7 +152,7 @@ export default function LandingPage() {
           </button>
         </div>
 
-        
+
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-200 bg-white px-4 py-5 space-y-4">
             <nav className="flex flex-col gap-3">
@@ -170,12 +170,12 @@ export default function LandingPage() {
 
       <main>
 
-        
+
         <section className="pt-16 pb-20 md:pt-24 md:pb-28 border-b border-slate-100 overflow-hidden">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-              
+
               <div>
                 <p className="text-sm font-medium text-primary mb-5">
                   Built for traders, provision stores, POS agents, and small retailers.
@@ -206,7 +206,7 @@ export default function LandingPage() {
                   </Link>
                 </div>
 
-                
+
                 <div className="grid grid-cols-3 gap-6 border-t border-slate-100 pt-8">
                   <div>
                     <p className="text-2xl font-bold text-slate-900">₦184k</p>
@@ -223,11 +223,11 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              
+
               <div className="hidden lg:block">
                 <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
 
-                  
+
                   <div className="bg-slate-50 border-b border-slate-200 px-5 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
                       <div className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs">F</div>
@@ -239,7 +239,7 @@ export default function LandingPage() {
                     <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">Live</span>
                   </div>
 
-                  
+
                   <div className="grid grid-cols-2 gap-px bg-slate-100">
                     <div className="bg-white px-5 py-4">
                       <p className="text-xs text-slate-400 mb-1">Yesterday&apos;s sales</p>
@@ -263,7 +263,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  
+
                   <div className="border-t border-slate-200 bg-amber-50 px-5 py-3.5 flex items-start gap-2.5">
                     <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                     <div>
@@ -272,7 +272,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  
+
                   <div className="px-5 py-3 flex items-center gap-1.5 border-t border-slate-100">
                     <Sparkles className="w-3.5 h-3.5 text-slate-400" />
                     <p className="text-xs text-slate-400">Powered by Gemini · Updated 7:02 AM</p>
@@ -285,7 +285,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        
+
         <section id="why-merchantiq" className="py-20 bg-slate-50 border-b border-slate-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="max-w-xl mb-12">
@@ -314,7 +314,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        
+
         <section id="features" className="py-20 border-b border-slate-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="max-w-xl mb-12">
@@ -346,12 +346,12 @@ export default function LandingPage() {
           </div>
         </section>
 
-        
+
         <section className="py-20 bg-slate-50 border-b border-slate-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-start">
 
-              
+
               <div>
                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
                   Your morning business summary, every day
@@ -386,13 +386,13 @@ export default function LandingPage() {
                 </button>
               </div>
 
-              
+
               <div className="max-w-sm w-full">
 
-                
+
                 <div className="bg-[#e5ddd5] rounded-2xl p-4 border border-slate-200">
 
-                  
+
                   <div className="flex items-center gap-3 bg-[#075e54] rounded-xl px-4 py-3 mb-4">
                     <div className="w-9 h-9 rounded-full bg-emerald-300 flex items-center justify-center shrink-0">
                       <span className="text-emerald-900 font-bold text-sm">M</span>
@@ -403,7 +403,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  
+
                   <div className="bg-white rounded-xl rounded-tl-sm px-4 py-3.5 text-sm text-slate-800 leading-relaxed space-y-2">
                     {briefState === 'loading' ? (
                       <div className="flex items-center gap-2 py-3 text-slate-400 text-xs">
@@ -438,7 +438,7 @@ export default function LandingPage() {
                     )}
                   </div>
 
-                  
+
                   <p className="text-right text-xs text-slate-500 mt-2 px-1">✓✓ Delivered</p>
                 </div>
 
@@ -451,7 +451,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        
+
         <section id="how-it-works" className="py-20 border-b border-slate-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
             <div className="max-w-xl mb-12">
@@ -488,49 +488,43 @@ export default function LandingPage() {
           </div>
         </section>
 
-        
-        <section className="relative py-24 overflow-hidden bg-slate-900">
-          
-          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 100%, rgba(16,185,129,0.12) 0%, transparent 70%)' }} />
-
+        <section className="relative py-24 bg-white border-t border-slate-100">
           <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
-            
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-600/20 border border-emerald-600/30 mb-6">
-              <ShoppingBag className="w-7 h-7 text-emerald-400" />
+
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 mb-6 text-emerald-600 shadow-sm">
+              <ShoppingBag className="w-7 h-7" />
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-bold text-white mb-5 leading-tight">
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 mb-5 leading-tight tracking-tight">
               Every small business owner deserves to understand their own money.
             </h2>
-            <p className="text-slate-400 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
+            <p className="text-slate-600 text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed">
               MerchantIQ is free to try. Upload your first statement and see what your transactions are telling you — in plain language.
             </p>
 
-            
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-sm hover:shadow-md text-base"
               >
                 Try Demo
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
                 href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center border border-white/20 hover:border-white/40 hover:bg-white/5 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base"
+                className="w-full sm:w-auto inline-flex items-center justify-center border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-semibold px-8 py-4 rounded-xl transition-all text-base"
               >
                 Create Account
               </Link>
             </div>
 
-            
-            <p className="text-slate-500 text-sm mt-6">No credit card required &nbsp;·&nbsp; Takes under 3 minutes</p>
+            <p className="text-slate-400 text-xs mt-6">No credit card required &nbsp;·&nbsp; Takes under 3 minutes</p>
           </div>
         </section>
 
       </main>
 
-      
+
       <footer className="bg-white border-t border-slate-200 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
