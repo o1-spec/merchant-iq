@@ -84,6 +84,7 @@ export default function ProfilePage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const loadProfile = async () => {
     setLoading(true);
@@ -419,7 +420,7 @@ export default function ProfilePage() {
             </div>
             
             <button
-              onClick={handleLogout}
+              onClick={() => setShowLogoutModal(true)}
               disabled={loggingOut}
               className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold border border-red-200 hover:border-red-300 text-red-600 bg-red-50/50 hover:bg-red-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
             >
@@ -434,6 +435,43 @@ export default function ProfilePage() {
 
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-sm animate-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600 shrink-0">
+                <LogOut className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-slate-900 text-sm">Log out of MerchantIQ?</h3>
+                <p className="text-xs text-slate-500 mt-0.5">You will need to sign in again to access your store insights.</p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 text-xs font-semibold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setShowLogoutModal(false);
+                  await handleLogout();
+                }}
+                className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

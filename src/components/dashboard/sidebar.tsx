@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -118,6 +119,7 @@ interface SidebarProps {
 export function Sidebar({ merchantName, businessName, mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   async function handleLogout() {
     try {
@@ -127,6 +129,11 @@ export function Sidebar({ merchantName, businessName, mobileOpen, onMobileClose 
     }
   }
 
+  const triggerLogoutModal = () => {
+    onMobileClose();
+    setShowLogoutModal(true);
+  };
+
   return (
     <>
       
@@ -135,7 +142,7 @@ export function Sidebar({ merchantName, businessName, mobileOpen, onMobileClose 
           pathname={pathname}
           merchantName={merchantName}
           businessName={businessName}
-          onLogout={handleLogout}
+          onLogout={triggerLogoutModal}
         />
       </aside>
 
@@ -154,9 +161,46 @@ export function Sidebar({ merchantName, businessName, mobileOpen, onMobileClose 
               merchantName={merchantName}
               businessName={businessName}
               onLinkClick={onMobileClose}
-              onLogout={async () => { onMobileClose(); await handleLogout(); }}
+              onLogout={triggerLogoutModal}
             />
           </aside>
+        </div>
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-sm animate-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center text-red-600 shrink-0">
+                <LogOut className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Log out of MerchantIQ?</h3>
+                <p className="text-xs text-slate-500 mt-0.5">You will need to sign in again to access your store insights.</p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2.5 pt-1">
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(false)}
+                className="px-4 py-2 text-xs font-semibold text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  setShowLogoutModal(false);
+                  await handleLogout();
+                }}
+                className="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>

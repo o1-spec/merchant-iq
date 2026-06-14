@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { getMe } from '@/lib/auth-client';
 import {
   Menu,
   X,
@@ -92,6 +93,13 @@ function smoothScrollTo(id: string) {
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [briefState, setBriefState] = useState<'initial' | 'loading' | 'updated'>('initial');
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    getMe()
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setIsAuthenticated(false));
+  }, []);
 
   const handleRefreshBrief = () => {
     setBriefState('loading');
@@ -128,18 +136,31 @@ export default function LandingPage() {
 
 
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2 transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              href="/login"
-              className="text-sm font-semibold bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-md transition-colors"
-            >
-              Try Demo
-            </Link>
+            {isAuthenticated === true ? (
+              <Link
+                href="/dashboard"
+                className="text-sm font-semibold bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-md transition-colors"
+              >
+                Go to Dashboard
+              </Link>
+            ) : isAuthenticated === false ? (
+              <>
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-slate-600 hover:text-slate-900 px-3 py-2 transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-sm font-semibold bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-md transition-colors"
+                >
+                  Try Demo
+                </Link>
+              </>
+            ) : (
+              <div className="w-20 h-8" />
+            )}
           </div>
 
 
@@ -161,8 +182,16 @@ export default function LandingPage() {
               <button onClick={() => { smoothScrollTo('why-merchantiq'); setMobileMenuOpen(false); }} className="text-sm text-slate-600 py-1 text-left">Why MerchantIQ</button>
             </nav>
             <div className="border-t border-slate-100 pt-4 flex flex-col gap-3">
-              <Link href="/login" className="text-sm text-center text-slate-700 py-2">Login</Link>
-              <Link href="/login" className="text-sm text-center font-semibold bg-primary text-white py-2.5 rounded-md">Try Demo</Link>
+              {isAuthenticated === true ? (
+                <Link href="/dashboard" className="text-sm text-center font-semibold bg-primary text-white py-2.5 rounded-md">
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link href="/login" className="text-sm text-center text-slate-700 py-2">Login</Link>
+                  <Link href="/login" className="text-sm text-center font-semibold bg-primary text-white py-2.5 rounded-md">Try Demo</Link>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -191,19 +220,31 @@ export default function LandingPage() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-3 mb-12">
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-7 py-3.5 rounded-lg transition-all text-sm"
-                  >
-                    Try Demo
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-semibold px-7 py-3.5 rounded-lg transition-all text-sm"
-                  >
-                    Create Account
-                  </Link>
+                  {isAuthenticated === true ? (
+                    <Link
+                      href="/dashboard"
+                      className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-7 py-3.5 rounded-lg transition-all text-sm"
+                    >
+                      Go to Dashboard
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-7 py-3.5 rounded-lg transition-all text-sm"
+                      >
+                        Try Demo
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                      <Link
+                        href="/login"
+                        className="inline-flex items-center justify-center gap-2 border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-semibold px-7 py-3.5 rounded-lg transition-all text-sm"
+                      >
+                        Create Account
+                      </Link>
+                    </>
+                  )}
                 </div>
 
 
@@ -503,19 +544,31 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-sm hover:shadow-md text-base"
-              >
-                Try Demo
-                <ArrowRight className="w-5 h-5" />
-              </Link>
-              <Link
-                href="/login"
-                className="w-full sm:w-auto inline-flex items-center justify-center border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-semibold px-8 py-4 rounded-xl transition-all text-base"
-              >
-                Create Account
-              </Link>
+              {isAuthenticated === true ? (
+                <Link
+                  href="/dashboard"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-sm hover:shadow-md text-base"
+                >
+                  Go to Dashboard
+                  <ArrowRight className="w-5 h-5" />
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover active:bg-slate-950 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-sm hover:shadow-md text-base"
+                  >
+                    Try Demo
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="w-full sm:w-auto inline-flex items-center justify-center border border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-700 font-semibold px-8 py-4 rounded-xl transition-all text-base"
+                  >
+                    Create Account
+                  </Link>
+                </>
+              )}
             </div>
 
             <p className="text-slate-400 text-xs mt-6">No credit card required &nbsp;·&nbsp; Takes under 3 minutes</p>
