@@ -202,33 +202,30 @@ export default function DashboardPage() {
       </div>
 
       
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
-
-        
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-slate-900">Recent Transactions</h2>
-            <span className="text-xs text-slate-400">{recentTransactions.length} shown</span>
-          </div>
-          <TransactionTable transactions={recentTransactions} />
+      {/* Recent Transactions */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold text-slate-900">Recent Transactions</h2>
+          <span className="text-xs text-slate-400">{recentTransactions.length} shown</span>
         </div>
+        <TransactionTable transactions={recentTransactions} />
+      </div>
 
-        
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-slate-900">AI Insights</h2>
-            <span className="text-xs text-slate-400">{latestInsights.length} total</span>
-          </div>
-          {latestInsights.length === 0 ? (
-            <InsightsEmptyState />
-          ) : (
-            <div className="space-y-3">
-              {latestInsights.map((insight) => (
-                <InsightCard key={insight.id} insight={insight} />
-              ))}
-            </div>
-          )}
+      {/* AI Insights */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold text-slate-900">AI Insights</h2>
+          <span className="text-xs text-slate-400">{latestInsights.length} total</span>
         </div>
+        {latestInsights.length === 0 ? (
+          <InsightsEmptyState />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {latestInsights.map((insight) => (
+              <InsightCard key={insight.id} insight={insight} />
+            ))}
+          </div>
+        )}
       </div>
 
       

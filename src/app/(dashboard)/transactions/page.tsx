@@ -27,7 +27,7 @@ import {
 } from '@/lib/transactions-client';
 import { useToast } from '@/components/ui/toast';
 
-const LIMIT = 20;
+const LIMIT = 10;
 
 const TYPES = ['INCOME', 'EXPENSE'] as const;
 const DIRECTIONS = ['INFLOW', 'OUTFLOW'] as const;
