@@ -146,26 +146,34 @@ export function Sidebar({ merchantName, businessName, mobileOpen, onMobileClose 
         />
       </aside>
 
-      
-      {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-40 flex">
-          
-          <div
-            className="fixed inset-0 bg-black/40"
-            onClick={onMobileClose}
+      {/* Mobile Drawer */}
+      <div
+        className={`md:hidden fixed inset-0 z-40 flex transition-all duration-300 ease-in-out ${
+          mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        
+        <div
+          className={`fixed inset-0 bg-black/40 transition-opacity duration-300 ease-in-out ${
+            mobileOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={onMobileClose}
+        />
+        
+        <aside
+          className={`relative z-50 w-64 bg-white h-full shadow-2xl transition-transform duration-300 ease-in-out transform ${
+            mobileOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <SidebarContent
+            pathname={pathname}
+            merchantName={merchantName}
+            businessName={businessName}
+            onLinkClick={onMobileClose}
+            onLogout={triggerLogoutModal}
           />
-          
-          <aside className="relative z-50 w-64 bg-white h-full">
-            <SidebarContent
-              pathname={pathname}
-              merchantName={merchantName}
-              businessName={businessName}
-              onLinkClick={onMobileClose}
-              onLogout={triggerLogoutModal}
-            />
-          </aside>
-        </div>
-      )}
+        </aside>
+      </div>
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
