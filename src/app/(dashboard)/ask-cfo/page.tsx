@@ -12,6 +12,7 @@ import {
   Brain
 } from 'lucide-react';
 import { askCfo } from '@/lib/ai-client';
+import { MarkdownFormatter } from '@/components/ui/MarkdownFormatter';
 
 interface Message {
   id: string;
@@ -170,13 +171,13 @@ export default function AskCfoPage() {
 
                     
                     <div
-                      className={`rounded-2xl px-4 py-3 text-xs leading-relaxed whitespace-pre-wrap
+                      className={`rounded-2xl px-4 py-3 text-xs leading-relaxed
                         ${isUser
-                          ? 'bg-slate-900 text-white rounded-tr-none'
+                          ? 'bg-slate-900 text-white rounded-tr-none whitespace-pre-wrap'
                           : 'bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-none'
                         }`}
                     >
-                      {msg.text}
+                      {isUser ? msg.text : <MarkdownFormatter content={msg.text} />}
                     </div>
                   </div>
                 );

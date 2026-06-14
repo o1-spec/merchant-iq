@@ -26,6 +26,17 @@ import {
   type Insight
 } from '@/lib/ai-client';
 import { useToast } from '@/components/ui/toast';
+import { MarkdownFormatter } from '@/components/ui/MarkdownFormatter';
+
+function stripMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^(#{1,6})\s+/gm, '') // headings
+    .replace(/\*\*(.*?)\*\*/g, '$1') // bold
+    .replace(/\*(.*?)\*/g, '$1') // italics
+    .replace(/^[*•-]\s+/gm, '') // list items
+    .replace(/^\d+\.\s+/gm, ''); // numbered list items
+}
 
 function fmtDate(dateStr: string) {
   try {
@@ -434,8 +445,8 @@ export default function AiCfoPage() {
               </div>
             </div>
 
-            <div className="text-slate-700 text-sm whitespace-pre-wrap leading-relaxed font-sans font-normal selection:bg-emerald-100 max-h-[60vh] overflow-y-auto pr-1">
-              {activeResult.content}
+            <div className="text-slate-700 text-sm leading-relaxed font-sans font-normal selection:bg-emerald-100 max-h-[60vh] overflow-y-auto pr-1">
+              <MarkdownFormatter content={activeResult.content} />
             </div>
 
             <div className="flex justify-end pt-3 border-t border-slate-100">
@@ -640,7 +651,7 @@ export default function AiCfoPage() {
 
 
                     <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
-                      {ins.content}
+                      {stripMarkdown(ins.content)}
                     </p>
                   </div>
 

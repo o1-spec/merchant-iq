@@ -22,6 +22,17 @@ import {
   type BusinessHealthReportResponse
 } from '@/lib/reports-client';
 import { useToast } from '@/components/ui/toast';
+import { MarkdownFormatter } from '@/components/ui/MarkdownFormatter';
+
+function stripMarkdown(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/^(#{1,6})\s+/gm, '') // headings
+    .replace(/\*\*(.*?)\*\*/g, '$1') // bold
+    .replace(/\*(.*?)\*/g, '$1') // italics
+    .replace(/^[*•-]\s+/gm, '') // list items
+    .replace(/^\d+\.\s+/gm, ''); // numbered list items
+}
 
 function fmt(amount: number) {
   return new Intl.NumberFormat('en-NG', {
@@ -465,7 +476,7 @@ export default function ReportsPage() {
                           {badge.label}
                         </span>
                       </div>
-                      <p className="text-slate-500 line-clamp-3 leading-relaxed whitespace-pre-wrap">{insight.content}</p>
+                      <p className="text-slate-500 line-clamp-3 leading-relaxed">{stripMarkdown(insight.content)}</p>
                       <p className="text-[9px] text-slate-400 font-medium pt-1">
                         {new Date(insight.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short' })}
                       </p>

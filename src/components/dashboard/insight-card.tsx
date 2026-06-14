@@ -1,5 +1,6 @@
 import { Lightbulb, Pin } from 'lucide-react';
 import type { Insight } from '@/lib/dashboard-client';
+import { MarkdownFormatter } from '@/components/ui/MarkdownFormatter';
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -31,7 +32,9 @@ export function InsightCard({ insight }: { insight: Insight }) {
         {insight.isPinned && <Pin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />}
       </div>
 
-      <p className="text-sm text-slate-600 leading-relaxed">{insight.content}</p>
+      <div className="text-sm text-slate-600 leading-relaxed">
+        <MarkdownFormatter content={insight.content} />
+      </div>
 
       <div className="flex items-center justify-between pt-1">
         <span className={`text-[10px] font-semibold border px-2 py-0.5 rounded-full uppercase tracking-wider ${colorClass}`}>

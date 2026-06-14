@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { successResponse, errorResponse } from "@/lib/response";
 import { registerSchema } from "@/lib/validation";
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
     
     const passwordHash = await hashPassword(password);
 
-    const user = await prisma.$transaction(async (tx: Parameters<Parameters<typeof prisma.$transaction>[0]>[0]) => {
+    const user = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       return tx.user.create({
         data: {
           name,

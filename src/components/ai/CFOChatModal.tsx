@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { MarkdownFormatter } from '@/components/ui/MarkdownFormatter';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -88,10 +89,10 @@ export function CFOChatModal({ isOpen, onClose }: CFOChatModalProps) {
             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm ${
                 msg.role === 'user' 
-                  ? 'bg-primary text-primary-foreground rounded-tr-sm' 
+                  ? 'bg-primary text-primary-foreground rounded-tr-sm whitespace-pre-wrap' 
                   : 'bg-muted border border-border text-foreground rounded-tl-sm'
               }`}>
-                {msg.content}
+                {msg.role === 'user' ? msg.content : <MarkdownFormatter content={msg.content} />}
               </div>
             </div>
           ))}
