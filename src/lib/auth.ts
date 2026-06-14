@@ -74,6 +74,7 @@ export async function getCurrentUser(req?: NextRequest) {
           businessType: true,
           businessCategory: true,
           location: true,
+          hasCompletedOnboarding: true,
           createdAt: true,
           updatedAt: true,
         }

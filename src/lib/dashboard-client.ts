@@ -1,4 +1,4 @@
-import { apiGet } from "./api-client";
+import { apiGet, apiPatch } from "./api-client";
 
 export interface MerchantInfo {
   id: string;
@@ -6,6 +6,7 @@ export interface MerchantInfo {
   businessType: string;
   businessCategory: string;
   location: string;
+  hasCompletedOnboarding: boolean;
 }
 
 export interface SummaryData {
@@ -70,4 +71,8 @@ export interface DashboardData {
 
 export function getDashboard(): Promise<DashboardData> {
   return apiGet<DashboardData>("/api/dashboard");
+}
+
+export function completeOnboarding(): Promise<{ merchant: { id: string; hasCompletedOnboarding: boolean } }> {
+  return apiPatch<{ merchant: { id: string; hasCompletedOnboarding: boolean } }>("/api/merchant/onboarding");
 }

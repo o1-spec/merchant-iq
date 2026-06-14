@@ -21,6 +21,7 @@ export interface MerchantProfile {
   businessType: string;
   businessCategory: string;
   location: string;
+  hasCompletedOnboarding: boolean;
 }
 
 export interface AuthUser {

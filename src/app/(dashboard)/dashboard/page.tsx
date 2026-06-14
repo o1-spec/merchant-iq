@@ -18,6 +18,7 @@ import { MetricCard } from '@/components/dashboard/metric-card';
 import { InsightCard, InsightsEmptyState } from '@/components/dashboard/insight-card';
 import { TransactionTable } from '@/components/dashboard/transaction-table';
 import { DashboardSkeleton } from '@/components/dashboard/dashboard-skeleton';
+import { OnboardingModal } from '@/components/dashboard/OnboardingModal';
 
 function fmt(amount: number) {
   return new Intl.NumberFormat('en-NG', {
@@ -84,6 +85,7 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -91,6 +93,9 @@ export default function DashboardPage() {
     try {
       const result = await getDashboard();
       setData(result);
+      if (result.merchant && !result.merchant.hasCompletedOnboarding) {
+        setShowOnboarding(true);
+      }
     } catch {
       setError(true);
     } finally {
@@ -107,6 +112,9 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 max-w-[1200px]">
+      {showOnboarding && (
+        <OnboardingModal onComplete={() => setShowOnboarding(false)} />
+      )}
 
       
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-card-border">

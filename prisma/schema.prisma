@@ -35,6 +35,7 @@ model Merchant {
   currency         String            @default("NGN")
   alertThreshold   Float             @default(10000.0)
   smsNotifications Boolean           @default(false)
+  hasCompletedOnboarding Boolean   @default(false)
   loanApplications LoanApplication[]
 }
 
