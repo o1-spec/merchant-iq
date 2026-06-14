@@ -37,6 +37,19 @@ model Merchant {
   smsNotifications Boolean           @default(false)
   hasCompletedOnboarding Boolean   @default(false)
   loanApplications LoanApplication[]
+  chatMessages     ChatMessage[]
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  merchantId String
+  merchant   Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  role       String   // "user" or "model"
+  content    String
+  createdAt  DateTime @default(now())
+
+  @@index([merchantId])
+  @@index([createdAt])
 }
 
 model Transaction {

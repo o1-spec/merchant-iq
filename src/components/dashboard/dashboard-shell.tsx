@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Sidebar } from '@/components/dashboard/sidebar';
 import { Topbar } from '@/components/dashboard/topbar';
+import { ChatWidget } from '@/components/dashboard/ChatWidget';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -40,6 +41,7 @@ export function DashboardShell({
           {children}
         </main>
       </div>
+      <ChatWidget />
     </div>
   );
 }

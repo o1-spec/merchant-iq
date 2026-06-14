@@ -11,13 +11,13 @@ import {
   User,
   Brain
 } from 'lucide-react';
-import { askCfo } from '@/lib/ai-client';
 import { MarkdownFormatter } from '@/components/ui/MarkdownFormatter';
 
-interface Message {
+interface ChatMessage {
   id: string;
-  sender: 'user' | 'cfo';
-  text: string;
+  role: 'user' | 'model';
+  content: string;
+  createdAt: string;
 }
 
 const SUGGESTIONS = [
@@ -30,43 +30,48 @@ const SUGGESTIONS = [
 ];
 
 export default function AskCfoPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [fetchingHistory, setFetchingHistory] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const isFirstMount = useRef(true);
-
-  // Load chat history from localStorage on mount
+  // Load chat history from DB on mount
   useEffect(() => {
-    const cached = localStorage.getItem('merchantiq_chat_history');
-    if (cached) {
+    const loadHistory = async () => {
       try {
-        setMessages(JSON.parse(cached));
+        const res = await fetch('/api/chat/messages');
+        const json = await res.json();
+        if (res.ok && json.success) {
+          setMessages(json.data.messages || []);
+        } else {
+          setError(json.error || 'Failed to load chat history');
+        }
       } catch (err) {
-        console.error('Failed to parse cached chat history:', err);
+        setError('Could not connect to server.');
+      } finally {
+        setFetchingHistory(false);
       }
-    }
-    isFirstMount.current = false;
+    };
+    loadHistory();
   }, []);
 
-  // Save chat history to localStorage whenever it changes
-  useEffect(() => {
-    if (isFirstMount.current) return;
-    try {
-      if (messages.length > 0) {
-        localStorage.setItem('merchantiq_chat_history', JSON.stringify(messages));
-      } else {
-        localStorage.removeItem('merchantiq_chat_history');
-      }
-    } catch (err) {
-      console.error('Failed to cache chat history:', err);
-    }
-  }, [messages]);
-
-  const handleClearChat = () => {
+  const handleClearChat = async () => {
     if (window.confirm('Are you sure you want to clear your chat history?')) {
-      setMessages([]);
+      setLoading(true);
+      try {
+        const res = await fetch('/api/chat/messages', { method: 'DELETE' });
+        const json = await res.json();
+        if (res.ok && json.success) {
+          setMessages([]);
+        } else {
+          setError(json.error || 'Failed to clear history');
+        }
+      } catch (err) {
+        setError('Failed to clear chat history.');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -76,7 +81,6 @@ export default function AskCfoPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  
   useEffect(() => {
     scrollToBottom();
   }, [messages, loading]);
@@ -91,33 +95,40 @@ export default function AskCfoPage() {
     const query = (textToSend ?? input).trim();
     if (!query || loading) return;
 
-    
-    const userMsg: Message = {
-      id: `user-${Date.now()}`,
-      sender: 'user',
-      text: query
+    setInput('');
+    const tempUserMsg: ChatMessage = {
+      id: `temp-user-${Date.now()}`,
+      role: 'user',
+      content: query,
+      createdAt: new Date().toISOString(),
     };
 
-    
-    setMessages((prev) => [...prev, userMsg].slice(-10));
-    setInput('');
+    setMessages((prev) => [...prev, tempUserMsg]);
     setLoading(true);
     setError(null);
 
     try {
-      const res = await askCfo(query);
-      
-      const cfoMsg: Message = {
-        id: `cfo-${Date.now()}`,
-        sender: 'cfo',
-        text: res.answer
-      };
+      const res = await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: query }),
+      });
+      const json = await res.json();
 
-      
-      setMessages((prev) => [...prev, cfoMsg].slice(-10));
-    } catch (err) {
-      
-      setError(err instanceof Error ? err.message : 'Could not answer that right now. Please try again.');
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || 'Failed to get answer');
+      }
+
+      const { userMessage, modelMessage } = json.data;
+
+      setMessages((prev) =>
+        prev
+          .filter((m) => m.id !== tempUserMsg.id)
+          .concat([userMessage, modelMessage])
+      );
+    } catch (err: any) {
+      setError(err.message || 'Could not answer that right now. Please try again.');
+      setMessages((prev) => prev.filter((m) => m.id !== tempUserMsg.id));
     } finally {
       setLoading(false);
     }
@@ -137,7 +148,7 @@ export default function AskCfoPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-bold text-slate-900">Ask CFO</h1>
-            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
               <Sparkles className="w-2.5 h-2.5 shrink-0" />
               Grounded
             </span>
@@ -167,7 +178,12 @@ export default function AskCfoPage() {
         
         <div className="flex-1 overflow-y-auto p-4 md:p-5 space-y-4 min-h-0">
           
-          {messages.length === 0 ? (
+          {fetchingHistory ? (
+            <div className="h-full flex items-center justify-center text-slate-400 gap-2">
+              <Loader2 className="w-5 h-5 animate-spin text-emerald-600" />
+              <span className="text-sm font-semibold">Loading conversation history...</span>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-6 max-w-md mx-auto">
               <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                 <Brain className="w-6 h-6 shrink-0" />
@@ -195,7 +211,7 @@ export default function AskCfoPage() {
           ) : (
             <div className="space-y-4">
               {messages.map((msg) => {
-                const isUser = msg.sender === 'user';
+                const isUser = msg.role === 'user';
                 return (
                   <div
                     key={msg.id}
@@ -208,7 +224,7 @@ export default function AskCfoPage() {
                       className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 border text-xs font-semibold
                         ${isUser 
                           ? 'bg-slate-100 text-slate-700 border-slate-200' 
-                          : 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                          : 'bg-slate-100 text-slate-850 border-slate-250'
                         }`}
                     >
                       {isUser ? <User className="w-3.5 h-3.5" /> : 'IQ'}
@@ -222,7 +238,7 @@ export default function AskCfoPage() {
                           : 'bg-slate-50 border border-slate-200 text-slate-800 rounded-tl-none'
                         }`}
                     >
-                      {isUser ? msg.text : <MarkdownFormatter content={msg.text} />}
+                      {isUser ? msg.content : <MarkdownFormatter content={msg.content} />}
                     </div>
                   </div>
                 );
@@ -287,13 +303,13 @@ export default function AskCfoPage() {
             onKeyDown={handleKeyDown}
             disabled={loading}
             placeholder="Ask something like: Can I afford to buy ₦200,000 worth of stock next week?"
-            className="flex-1 max-h-[80px] min-h-[40px] px-3.5 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent disabled:bg-slate-100 resize-none transition-shadow"
+            className="flex-1 max-h-[80px] min-h-[40px] px-3.5 py-2 text-xs border border-slate-300 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent disabled:bg-slate-100 resize-none transition-shadow"
             rows={1}
           />
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || loading}
-            className="flex items-center justify-center p-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white rounded-xl transition-colors shrink-0"
+            className="flex items-center justify-center p-2.5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 text-white rounded-xl transition-colors shrink-0"
             title="Ask CFO"
           >
             {loading ? (
