@@ -222,6 +222,52 @@ function isSignedNegative(raw: unknown): boolean {
   return str.startsWith('-') || str.startsWith('(');
 }
 
+function autoCategorize(description: string, direction: 'INFLOW' | 'OUTFLOW'): string {
+  const desc = description.toLowerCase().trim();
+  if (!desc) {
+    return direction === 'INFLOW' ? 'Revenue' : 'Expense';
+  }
+
+  if (direction === 'INFLOW') {
+    if (desc.includes('sales') || desc.includes('pos') || desc.includes('payment') || desc.includes('customer')) {
+      return 'Sales';
+    }
+    if (desc.includes('transfer from') || desc.includes('received')) {
+      return 'Sales';
+    }
+    if (desc.includes('interest') || desc.includes('bonus') || desc.includes('owealth withdrawal')) {
+      return 'Investment Income';
+    }
+    return 'Revenue';
+  } else {
+    if (desc.includes('netflix') || desc.includes('spotify') || desc.includes('google') || desc.includes('microsoft') || desc.includes('cloud') || desc.includes('aws')) {
+      return 'Software & Subscriptions';
+    }
+    if (desc.includes('salary') || desc.includes('wage') || desc.includes('staff') || desc.includes('payroll')) {
+      return 'Payroll';
+    }
+    if (desc.includes('rent') || desc.includes('office') || desc.includes('lease') || desc.includes('landlord')) {
+      return 'Rent & Lease';
+    }
+    if (desc.includes('electricity') || desc.includes('power') || desc.includes('water') || desc.includes('utility') || desc.includes('ekedc') || desc.includes('ikedc')) {
+      return 'Utilities';
+    }
+    if (desc.includes('save') || desc.includes('owealth') || desc.includes('investment') || desc.includes('piggyvest')) {
+      return 'Savings & Investments';
+    }
+    if (desc.includes('airtime') || desc.includes('data') || desc.includes('mtn') || desc.includes('glo') || desc.includes('airtel') || desc.includes('9mobile')) {
+      return 'Telecommunications';
+    }
+    if (desc.includes('transport') || desc.includes('fuel') || desc.includes('uber') || desc.includes('bolt') || desc.includes('petrol') || desc.includes('diesel')) {
+      return 'Logistics & Travel';
+    }
+    if (desc.includes('fee') || desc.includes('charge') || desc.includes('tax') || desc.includes('vat') || desc.includes('commission')) {
+      return 'Bank Fees & Taxes';
+    }
+    return 'Cost of Sales';
+  }
+}
+
 function detectOpayLayout(rows: string[][]): ParseConfig | null {
   // 1. Check for header row containing OPay keywords
   for (let i = 0; i < Math.min(rows.length, 12); i++) {
@@ -690,7 +736,7 @@ export async function POST(req: NextRequest) {
       const candidate = {
         amount,
         type: direction === 'INFLOW' ? ('INCOME' as const) : ('EXPENSE' as const),
-        category: 'Uncategorised',
+        category: autoCategorize(rawDesc ? String(rawDesc).trim() : '', direction),
         description: rawDesc ? String(rawDesc).trim() || null : null,
         date: parseDate(rawDate),
         source: 'BANK_STATEMENT' as const,
